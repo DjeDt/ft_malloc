@@ -1,31 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   malloc.c                                           :+:      :+:    :+:   */
+/*   create_new_pages.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/02/26 16:39:27 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/06 17:21:29 by ddinaut          ###   ########.fr       */
+/*   Created: 2018/03/06 13:55:39 by ddinaut           #+#    #+#             */
+/*   Updated: 2018/03/06 16:13:22 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
 
-void	*malloc(size_t size)
+void	*create_new_pages(size_t size, int zone_size)
 {
-	void	*ret;
+	void	*new;
+	size_t	total;
 
-	if (!size)
+	total = size * zone_size * getpagesize();
+	new = mmap(NULL, total, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
+	if (new == MAP_FAILED)
 	{
-		ft_putendl("return null");
+		ft_putstr_fd("fatal error during allocation, not enough space left\n", 2);
 		return (NULL);
 	}
-	if (size < TINY_SIZE)
-		ret = add_to_tiny(size, &g_page.tiny);
-	else if (size < MEDIUM_SIZE)
-		ret = add_to_medium(size, &g_page.medium);
-	else
-		ret = add_to_large(size, &g_page.large);
-	return (ret + HEADER_SIZE);
+	return (new);
 }
