@@ -6,120 +6,89 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/06 15:27:29 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/06 18:30:10 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/03/07 20:35:56 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
 
-t_chunk		*search_free_chunk(size_t size, t_chunk **list)
+void	init_chunk(t_chunk **chunk, size_t size)
 {
-	t_chunk	*ret;
-
-	if ((*list) == NULL)
-		return (NULL);
-	ret = (*list);
-	while (ret != NULL)
-	{
-		if (ret->size >= size && ret->statut == FREE)
-			return (ret);
-		ret = ret->next;
-	}
-	return (NULL);
+	(*chunk)->size = size;
+	(*chunk)->prev_size = 0;
+	(*chunk)->statut = USED;
+	(*chunk)->previous = NULL;
+	(*chunk)->next = NULL;
 }
 
-t_chunk		*create_chunk(size_t size)
+void	go_to_the_end(t_chunk **lst, t_chunk *new)
 {
-	t_chunk *new;
+	t_chunk *tmp;
 
-//	size = get_power_of_2(size);
-	new = mmap(NULL, size + HEADER_SIZE, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
-	if (new == MAP_FAILED)
-	{
-		ft_putendl_fd("allocation error: no space left", 2);
-		return (NULL);
-	}
-	new->size = size;
-	new->statut = USED;
-	new->next = NULL;
-	return (new);
-}
-
-void	*add_to_tiny(size_t size, t_chunk **tiny)
-{
-	t_chunk	*tmp;
-
-	if ((*tiny) == NULL)	/* in case of first call */
-	{
-		(*tiny) = create_chunk(size);
-		return ((*tiny));
-	}
+	if ((*lst) == NULL)
+		(*lst) = new;
 	else
 	{
-		tmp = (*tiny);
+		tmp = (*lst);
 		while (tmp->next != NULL)
 			tmp = tmp->next;
-		tmp->next = create_chunk(size);
-	}
-	return (tmp->next);
-}
-
-void	*add_to_medium(size_t size, t_chunk **medium)
-{
-	t_chunk	*tmp;
-
-	if ((*medium) == NULL)	/* in case of first call */
-	{
-		(*medium) = create_chunk(size);
-		return (*medium);
-	}
-	else
-	{
-		tmp = (*medium);
-		while (tmp->next != NULL)
-			tmp = tmp->next;
-		tmp->next = create_chunk(size);
-		return (tmp->next);
+		tmp->next = new;
+		tmp->next->prev_size = tmp->size;
+		tmp->next->previous = tmp;
 	}
 }
 
-/*
-void	*add_to_medium(size_t size, t_chunk **medium)
+void	*push_to_small_area(size_t size)
 {
-	t_chunk	*tmp;
+	t_chunk	*new;
+	size_t	total;
 
-	tmp = NULL;
-	if ((*medium) == NULL) // in case of first call
-	{
-		(*medium) = create_new_pages(size, MEDIUM_SIZE);
-		return (add_to_medium(size, medium));	// medium page isn't NULL anymore
-	}
-	else
-	{
-		tmp = (*medium);
-		while (tmp->next != NULL)
-			tmp = tmp->next;
-		tmp->next = create_chunk(size);
-	}
-	return (tmp->next);
+	total = size + HEADER_SIZE;
+	new = g_page.small->map + g_page.small->size_used;
+	init_chunk(&new, size);
+	g_page.small->size_used += total;
+	go_to_the_end(&g_page.small->chunk, new);
+	return (new + HEADER_SIZE);
 }
-*/
 
-void	*add_to_large(size_t size, t_chunk **large)
+void	*push_to_medium_area(size_t size)
 {
-	t_chunk	*tmp;
+	t_chunk	*new;
+	size_t	total;
 
-	if ((*large) == NULL)
-	{
-		(*large) = create_new_pages(size, LARGE_SIZE);
-		return (add_to_large(size, large));
-	}
+	total = size + HEADER_SIZE;
+	new = g_page.medium->map + g_page.medium->size_used;
+	init_chunk(&new, size);
+	g_page.medium->size_used += total;
+	go_to_the_end(&g_page.medium->chunk, new);
+	return (new + HEADER_SIZE);
+}
+
+void	*push_to_large_area(size_t size)
+{
+	t_chunk	*new;
+	t_area	*save;
+
+	save = g_page.large;
+	while (g_page.large->next != NULL)
+		g_page.large = g_page.large->next;
+	new = g_page.large->map;
+	init_chunk(&new, size);
+	g_page.large->size_used += size;
+	go_to_the_end(&g_page.large->chunk, new);
+	g_page.large = save;
+	return (new + HEADER_SIZE);
+}
+
+void	*push_chunk(size_t size)
+{
+	void	*ret;
+
+	if (size <= TINY_SIZE)
+		ret = push_to_small_area(size);
+	else if (size <= MEDIUM_SIZE)
+		ret = push_to_medium_area(size);
 	else
-	{
-		tmp = (*large);
-		while (tmp->next != NULL)
-			tmp = tmp->next;
-		tmp->next = create_chunk(size);
-	}
-	return (tmp->next);
+		ret = push_to_large_area(size);
+	return (ret);
 }
