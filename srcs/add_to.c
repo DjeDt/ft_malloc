@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/06 15:27:29 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/07 20:35:56 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/03/08 21:16:20 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,50 +21,37 @@ void	init_chunk(t_chunk **chunk, size_t size)
 	(*chunk)->next = NULL;
 }
 
-void	go_to_the_end(t_chunk **lst, t_chunk *new)
+void go_to_the_end(t_chunk **lst, t_chunk **new)
 {
 	t_chunk *tmp;
 
 	if ((*lst) == NULL)
-		(*lst) = new;
+		(*lst) = (*new);
 	else
 	{
 		tmp = (*lst);
 		while (tmp->next != NULL)
 			tmp = tmp->next;
-		tmp->next = new;
+		tmp->next = (*new);
 		tmp->next->prev_size = tmp->size;
 		tmp->next->previous = tmp;
 	}
 }
 
-void	*push_to_small_area(size_t size)
+t_chunk	*push_to_smaller_area(t_area *area, size_t size)
 {
 	t_chunk	*new;
 	size_t	total;
 
 	total = size + HEADER_SIZE;
-	new = g_page.small->map + g_page.small->size_used;
+	new = area->map + area->size_used;
 	init_chunk(&new, size);
-	g_page.small->size_used += total;
-	go_to_the_end(&g_page.small->chunk, new);
-	return (new + HEADER_SIZE);
+	area->size_used += total;
+	go_to_the_end(&area->chunk, &new);
+	return (new);
 }
 
-void	*push_to_medium_area(size_t size)
-{
-	t_chunk	*new;
-	size_t	total;
-
-	total = size + HEADER_SIZE;
-	new = g_page.medium->map + g_page.medium->size_used;
-	init_chunk(&new, size);
-	g_page.medium->size_used += total;
-	go_to_the_end(&g_page.medium->chunk, new);
-	return (new + HEADER_SIZE);
-}
-
-void	*push_to_large_area(size_t size)
+t_chunk	*push_to_large_area(size_t size)
 {
 	t_chunk	*new;
 	t_area	*save;
@@ -75,20 +62,21 @@ void	*push_to_large_area(size_t size)
 	new = g_page.large->map;
 	init_chunk(&new, size);
 	g_page.large->size_used += size;
-	go_to_the_end(&g_page.large->chunk, new);
 	g_page.large = save;
-	return (new + HEADER_SIZE);
+	go_to_the_end(&g_page.large->chunk, &new);
+	return (new);
 }
 
-void	*push_chunk(size_t size)
+t_chunk	*push_chunk_to_area(size_t size)
 {
 	void	*ret;
 
+	ret = NULL;
 	if (size <= TINY_SIZE)
-		ret = push_to_small_area(size);
+		ret = push_to_smaller_area(g_page.small, size);
 	else if (size <= MEDIUM_SIZE)
-		ret = push_to_medium_area(size);
+		ret = push_to_smaller_area(g_page.medium, size);
 	else
 		ret = push_to_large_area(size);
-	return (ret);
+	return (ret + HEADER_SIZE);
 }

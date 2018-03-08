@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/06 13:55:08 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/07 17:26:07 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/03/08 09:47:06 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,25 +69,30 @@ void	print_allocated_chunk(t_chunk **base)
 	{
 		while (tmp)
 		{
+			printf("[node addr] = %p | %p\n", tmp, tmp + HEADER_SIZE);
 			ft_putstr("size = ");
 			ft_putnbr(tmp->size);
-			ft_putchar('\n');
+			ft_putchar('\t');
 
 			ft_putstr("previous size = ");
 			ft_putnbr(tmp->prev_size);
-			ft_putchar('\n');
+			ft_putchar('\t');
 
 			ft_putstr("statut = ");
 			ft_putnbr(tmp->statut);
 			ft_putchar('\n');
 
-			ft_putstr("\n[next node]\n\n");
 			if (tmp->next)
+			{
+				ft_putstr("\n[next node] :\n");
 				tmp = tmp->next;
+			}
 			else
+			{
+				ft_putstr("[end print chunk]\n");
 				break ;
+			}
 		}
-
 /*
 		ft_putendl("on revient en arriere :\n");
 		while (tmp != NULL)

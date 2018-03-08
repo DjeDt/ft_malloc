@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:41:23 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/07 20:24:33 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/03/08 20:58:20 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,10 @@ typedef	struct		s_pages
 
 }					t_pages;
 
+# define		SUCCESS	1
+# define		NOPE	0
+# define		ERROR	-1
+
 # define		FREE	1
 # define		USED	0
 
@@ -65,10 +69,9 @@ pthread_mutex_t		g_thread;
 */
 void	*malloc(size_t size);
 
-void	*push_to_small_area(size_t size);
-void	*push_to_medium_area(size_t size);
-void	*push_to_medium_area(size_t size);
-void	*push_chunk(size_t size);
+t_chunk	*push_to_smaller_area(t_area *area, size_t size);
+t_chunk	*push_to_large_area(size_t size);
+t_chunk	*push_chunk_to_area(size_t size);
 
 /*
 **	free func

@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:39:27 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/07 21:02:21 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/03/08 21:15:11 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,6 @@ int		check_medium_arena(void)
 	}
 	return (0);
 }
-
-
 
 int		check_large_arena(size_t size)
 {
@@ -120,8 +118,10 @@ void	*malloc(size_t size)
 
 	if (!size)
 		return (NULL);
+	ret = NULL;
 	if (create_arena(size) == -1)
 		return (NULL);
-	ret = push_chunk(size);
+	ret = push_chunk_to_area(size);
+//	print_allocated_chunk(&g_page.small->chunk);
 	return (ret);
 }
