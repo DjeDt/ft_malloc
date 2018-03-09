@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:39:27 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/08 21:15:11 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/03/09 18:09:07 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,6 +122,8 @@ void	*malloc(size_t size)
 	if (create_arena(size) == -1)
 		return (NULL);
 	ret = push_chunk_to_area(size);
+
+	printf("[add to 4] %p\n", ret);
 //	print_allocated_chunk(&g_page.small->chunk);
 	return (ret);
 }

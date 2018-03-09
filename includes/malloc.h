@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:41:23 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/08 20:58:20 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/03/09 17:46:48 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,11 @@
 typedef struct		s_chunk
 {
 	size_t			size;			/* size of current data chunk */
-	size_t			prev_size;		/* previous chunk size */
+	void			*data;
 	int				statut;			/* is available ? */
 //	size_t			safe;			/* to check if data does not differ */
-	struct s_chunk	*previous;
 	struct s_chunk	*next;
+	struct s_chunk	*prev;
 }					t_chunk;
 
 typedef struct		s_area

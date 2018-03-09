@@ -6,42 +6,51 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/28 20:30:59 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/08 21:14:04 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/03/09 18:48:14 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
 
-void	assign_to_bin(t_chunk **head, t_chunk **new)
+void	rebuilt_area_chunk(t_chunk **chunk)
 {
-	t_chunk *swap;
-
-	swap = (*head)->next;
-	(*new)->previous = NULL;
-	(*new)->statut = FREE;
-	(*new)->next = swap;
-	(*head)->next = (*new);
+/*
+    ___<__<__
+ __/    __    \__
+|  |   | N|-->|  |
+|__|<--|P_|   |__|
+    \-->-->--/
+*/
+	if ((*chunk)->prev)
+		(*chunk)->prev->next = (*chunk)->next;
+	if ((*chunk)->next)
+		(*chunk)->next->prev = (*chunk)->prev;
 }
 
-void	move_chunk_to_bin(t_chunk **bin, t_chunk **chunk)
+void	push_chunk_to_bin(t_chunk **bin, t_chunk **chunk)
 {
 	t_chunk *tmp;
 
 	if ((*bin) == NULL)
 	{
-		ft_putendl("test1");
+		rebuilt_area_chunk(chunk);
+		(*chunk)->statut = FREE;
 		(*bin) = (*chunk);
-		(*bin)->next = NULL;
-		(*bin)->statut = FREE;
-		(*bin)->previous = NULL;
 	}
 	else
 	{
-		ft_putendl("test2");
 		tmp = (*bin);
-		while (tmp->next != NULL)
-			tmp = tmp->next;
-		assign_to_bin(&tmp->next, chunk);
+		while (tmp->next != NULL && (tmp->size <= (*chunk)->size))
+			tmp->next = tmp;
+		rebuilt_area_chunk(chunk);
+
+		if (tmp->next->next)
+			tmp->next->next->prev = (*chunk);
+
+		(*chunk)->prev = tmp;
+		(*chunk)->next = tmp->next;
+		(*chunk)->statut = FREE;
+		tmp->next = (*chunk);
 	}
 }
 
@@ -49,15 +58,15 @@ int		search_in_page(t_chunk **lst, void *ptr)
 {
 	t_chunk	*tmp;
 
-	tmp = (*lst);
-	if (tmp == NULL)
+	if ((*lst) == NULL)
 		return (ERROR);
-	while (tmp)
+	tmp = (*lst);
+	while (tmp != NULL)
 	{
-		if (tmp == (ptr - HEADER_SIZE))
+		printf("[while] tmp->data : %p | ptr : %p\n", tmp->data, ptr);
+		if (tmp->data == ptr)
 		{
-			ft_putendl("found");
-			move_chunk_to_bin(&g_page.bin, &tmp);
+			push_chunk_to_bin(&g_page.bin, &tmp);
 			return (SUCCESS);
 		}
 		tmp = tmp->next;
@@ -98,6 +107,10 @@ void	free(void *ptr)
 {
 	if (ptr == NULL)
 		return ;
+	printf("[free 1] %p\n", ptr);
 	search_for_chunk(ptr);
+	printf("\n\nPRINT ALLOCATED CHUNK PAGE BIN\n");
 	print_allocated_chunk(&g_page.bin);
+	printf("\n\nPRINT ALLOCATED CHUNK PAGE SMALL\n");
+	print_allocated_chunk(&g_page.small->chunk);
 }

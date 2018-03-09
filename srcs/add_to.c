@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/06 15:27:29 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/08 21:16:20 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/03/09 18:46:52 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,10 @@
 void	init_chunk(t_chunk **chunk, size_t size)
 {
 	(*chunk)->size = size;
-	(*chunk)->prev_size = 0;
+	(*chunk)->data = (*chunk) + sizeof(size_t);
 	(*chunk)->statut = USED;
-	(*chunk)->previous = NULL;
 	(*chunk)->next = NULL;
+	(*chunk)->prev = NULL;
 }
 
 void go_to_the_end(t_chunk **lst, t_chunk **new)
@@ -26,15 +26,19 @@ void go_to_the_end(t_chunk **lst, t_chunk **new)
 	t_chunk *tmp;
 
 	if ((*lst) == NULL)
+	{
 		(*lst) = (*new);
+//		printf("[add to 1] %p\n", (*lst)->data);
+	}
 	else
 	{
 		tmp = (*lst);
 		while (tmp->next != NULL)
 			tmp = tmp->next;
+		(*new)->prev = tmp;
+		(*new)->next = NULL;
 		tmp->next = (*new);
-		tmp->next->prev_size = tmp->size;
-		tmp->next->previous = tmp;
+//		printf("[add to 1] %p\n", tmp->next->data);
 	}
 }
 
@@ -48,7 +52,9 @@ t_chunk	*push_to_smaller_area(t_area *area, size_t size)
 	init_chunk(&new, size);
 	area->size_used += total;
 	go_to_the_end(&area->chunk, &new);
-	return (new);
+
+	printf("[add to 2] %p\n", new->data);
+	return (new->data);
 }
 
 t_chunk	*push_to_large_area(size_t size)
@@ -57,6 +63,7 @@ t_chunk	*push_to_large_area(size_t size)
 	t_area	*save;
 
 	save = g_page.large;
+
 	while (g_page.large->next != NULL)
 		g_page.large = g_page.large->next;
 	new = g_page.large->map;
@@ -64,7 +71,9 @@ t_chunk	*push_to_large_area(size_t size)
 	g_page.large->size_used += size;
 	g_page.large = save;
 	go_to_the_end(&g_page.large->chunk, &new);
-	return (new);
+
+	printf("[add to 2] %p\n", new->data);
+	return (new->data);
 }
 
 t_chunk	*push_chunk_to_area(size_t size)
@@ -78,5 +87,6 @@ t_chunk	*push_chunk_to_area(size_t size)
 		ret = push_to_smaller_area(g_page.medium, size);
 	else
 		ret = push_to_large_area(size);
-	return (ret + HEADER_SIZE);
+	printf("[add to 3] %p\n", ret);
+	return (ret);
 }
