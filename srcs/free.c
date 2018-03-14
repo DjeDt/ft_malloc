@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/28 20:30:59 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/09 18:48:14 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/03/14 19:30:08 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,41 +15,49 @@
 void	rebuilt_area_chunk(t_chunk **chunk)
 {
 /*
+  link previous and next list chunk from target list
     ___<__<__
  __/    __    \__
 |  |   | N|-->|  |
 |__|<--|P_|   |__|
     \-->-->--/
 */
+
 	if ((*chunk)->prev)
 		(*chunk)->prev->next = (*chunk)->next;
+	else
+		g_page.small->chunk = (*chunk)->next;
 	if ((*chunk)->next)
 		(*chunk)->next->prev = (*chunk)->prev;
+	(*chunk)->next = NULL;
+	(*chunk)->prev = NULL;
+	(*chunk)->statut = FREE;
+
 }
 
-void	push_chunk_to_bin(t_chunk **bin, t_chunk **chunk)
+void	extract_and_push(t_chunk **bin, t_chunk **chunk)
 {
 	t_chunk *tmp;
 
 	if ((*bin) == NULL)
 	{
 		rebuilt_area_chunk(chunk);
-		(*chunk)->statut = FREE;
 		(*bin) = (*chunk);
 	}
 	else
 	{
-		tmp = (*bin);
-		while (tmp->next != NULL && (tmp->size <= (*chunk)->size))
-			tmp->next = tmp;
 		rebuilt_area_chunk(chunk);
-
-		if (tmp->next->next)
-			tmp->next->next->prev = (*chunk);
-
+		tmp = (*bin);
+		while ((tmp->next != NULL) && (tmp->next->size <= (*chunk)->size))
+			tmp = tmp->next;
 		(*chunk)->prev = tmp;
-		(*chunk)->next = tmp->next;
-		(*chunk)->statut = FREE;
+		if (tmp->next)
+		{
+			(*chunk)->next = tmp->next->next;
+			tmp->next->prev = (*chunk);
+		}
+		else
+			(*chunk)->next = NULL;
 		tmp->next = (*chunk);
 	}
 }
@@ -63,10 +71,9 @@ int		search_in_page(t_chunk **lst, void *ptr)
 	tmp = (*lst);
 	while (tmp != NULL)
 	{
-		printf("[while] tmp->data : %p | ptr : %p\n", tmp->data, ptr);
 		if (tmp->data == ptr)
 		{
-			push_chunk_to_bin(&g_page.bin, &tmp);
+			extract_and_push(&g_page.bin, &tmp);
 			return (SUCCESS);
 		}
 		tmp = tmp->next;
@@ -88,9 +95,23 @@ int		search_smaller_one(void *ptr, t_area **area)
 	return (NOPE);
 }
 
-int		search_large_one(void *ptr)
+int		search_large_one(void *ptr, t_area **area)
 {
-	(void)ptr;
+	t_area *a_tmp;
+	t_area *prev;
+
+	a_tmp = (*area);
+	while (a_tmp != NULL)
+	{
+		if (a_tmp->chunk->data == ptr)
+		{
+			prev->next = a_tmp->next;
+			munmap(a_tmp, a_tmp->size_max);
+			return (SUCCESS);
+		}
+		prev = a_tmp;
+		a_tmp = a_tmp->next;
+	}
 	return (NOPE);
 }
 
@@ -99,7 +120,7 @@ void	search_for_chunk(void *ptr)
 	if (search_smaller_one(ptr, &g_page.small) != SUCCESS)
 	{
 		if (search_smaller_one(ptr, &g_page.medium) != SUCCESS)
-			search_large_one(ptr);
+			search_large_one(ptr, &g_page.large);
 	}
 }
 
@@ -107,10 +128,7 @@ void	free(void *ptr)
 {
 	if (ptr == NULL)
 		return ;
-	printf("[free 1] %p\n", ptr);
 	search_for_chunk(ptr);
-	printf("\n\nPRINT ALLOCATED CHUNK PAGE BIN\n");
+	printf("PRINT FREE LIST MALLOC\n");
 	print_allocated_chunk(&g_page.bin);
-	printf("\n\nPRINT ALLOCATED CHUNK PAGE SMALL\n");
-	print_allocated_chunk(&g_page.small->chunk);
 }

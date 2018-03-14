@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/06 13:55:08 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/09 16:18:29 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/03/14 19:29:31 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,14 +67,13 @@ void	print_allocated_chunk(t_chunk **base)
 	tmp = (*base);
 	if (tmp)
 	{
-		printf("[begin allocated chunk]\n");
+		printf("[BEGIN ALLOCATED CHUNK] :\n");
 		while (tmp)
 		{
 			printf("[node addr] = %p\n", tmp);
 			printf("[size] %zu\n", tmp->size);
 			printf("[data addr] %p\n", tmp->data);
 			printf("[statut] %d\n", tmp->statut);
-
 			if (tmp->next)
 			{
 				ft_putstr("\n[next node] :\n");
@@ -82,31 +81,10 @@ void	print_allocated_chunk(t_chunk **base)
 			}
 			else
 			{
-				ft_putstr("[end print chunk]\n");
+				ft_putstr("\n[ENDING ALLOCATED CHUNK]\n");
 				break ;
 			}
 		}
-/*
-		ft_putendl("on revient en arriere :\n");
-		while (tmp != NULL)
-		{
-			ft_putstr("size = ");
-			ft_putnbr(tmp->size);
-			ft_putchar('\n');
-
-			ft_putstr("previous size = ");
-			ft_putnbr(tmp->prev_size);
-			ft_putchar('\n');
-
-			ft_putstr("statut = ");
-			ft_putnbr(tmp->statut);
-			ft_putchar('\n');
-
-			ft_putstr("\n[next node]\n\n");
-			tmp = tmp->previous;
-		}
-		ft_putendl("end of truc ");
-*/
 	}
 	else
 		ft_putendl("empty list");

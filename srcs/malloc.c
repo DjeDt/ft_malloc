@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:39:27 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/09 18:09:07 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/03/14 19:29:42 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,12 @@ int		check_small_arena(void)
 
 	if (g_page.small == NULL)
 	{
-		total = ((TINY_SIZE * getpagesize()) * 100) + AREA_SIZE;
+		total = ((TINY_SIZE * getpagesize()) * 100);
 		g_page.small = mmap(NULL, total, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
 		if (g_page.small == MAP_FAILED)
 		{
 			ft_putendl_fd("allocation error. not enought space left.", 2);
-			return (-1);
+			return (ERROR);
 		}
 		g_page.small->size_used = 0;
 		g_page.small->size_max = total;
@@ -31,7 +31,7 @@ int		check_small_arena(void)
 		g_page.small->chunk = NULL;
 		g_page.small->next = NULL;
 	}
-	return (0);
+	return (SUCCESS);
 }
 
 int		check_medium_arena(void)
@@ -40,12 +40,12 @@ int		check_medium_arena(void)
 
 	if (g_page.medium == NULL)
 	{
-		total = ((MEDIUM_SIZE * getpagesize()) * 100) + AREA_SIZE;
+		total = ((MEDIUM_SIZE * getpagesize()) * 100);
 		g_page.medium = mmap(NULL, total, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
 		if (g_page.medium == MAP_FAILED)
 		{
 			ft_putendl_fd("allocation error. not enought space left.", 2);
-			return (-1);
+			return (ERROR);
 		}
 		g_page.medium->size_used = 0;
 		g_page.medium->size_max = total;
@@ -53,21 +53,21 @@ int		check_medium_arena(void)
 		g_page.medium->chunk = NULL;
 		g_page.medium->next = NULL;
 	}
-	return (0);
+	return (SUCCESS);
 }
 
 int		check_large_arena(size_t size)
 {
 	size_t total;
 
-	total = size + (getpagesize() - size % getpagesize()); /* to get next multiple of getpagesize() */
+	total = size + (getpagesize() - size % getpagesize());
 	if (g_page.large == NULL)
 	{
 		g_page.large = mmap(NULL, (total + AREA_SIZE), PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
 		if (g_page.large == MAP_FAILED)
 		{
 			ft_putendl_fd("allocation error. not enought space left.", 2);
-			return (-1);
+			return (ERROR);
 		}
 		g_page.large->size_used = 0;
 		g_page.large->size_max = size + AREA_SIZE;
@@ -86,7 +86,7 @@ int		check_large_arena(size_t size)
 		if (g_page.large->map == MAP_FAILED)
 		{
 			ft_putendl_fd("allocation error. not enought space left.", 2);
-			return (-1);
+			return (ERROR);
 		}
 		g_page.large->size_used = size;
 		g_page.large->size_max = size;
@@ -95,7 +95,7 @@ int		check_large_arena(size_t size)
 		g_page.large->next = NULL;
 		g_page.large = save;
 	}
-	return (0);
+	return (SUCCESS);
 }
 
 int		create_arena(size_t size)
@@ -104,7 +104,9 @@ int		create_arena(size_t size)
 
 	ret = 0;
 	if (size <= TINY_SIZE)
+	{
 		ret = check_small_arena();
+	}
 	else if (size <= MEDIUM_SIZE)
 		ret = check_medium_arena();
 	else
@@ -119,11 +121,10 @@ void	*malloc(size_t size)
 	if (!size)
 		return (NULL);
 	ret = NULL;
-	if (create_arena(size) == -1)
+	if (create_arena(size) != SUCCESS)
 		return (NULL);
 	ret = push_chunk_to_area(size);
-
-	printf("[add to 4] %p\n", ret);
-//	print_allocated_chunk(&g_page.small->chunk);
+	ft_putendl("\n\nPRINT ALLOCATED MALLOC MAIN");
+	print_allocated_chunk(&g_page.small->chunk);
 	return (ret);
 }

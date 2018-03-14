@@ -6,7 +6,7 @@
 #    By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/02/26 16:31:33 by ddinaut           #+#    #+#              #
-#    Updated: 2018/03/07 17:15:56 by ddinaut          ###   ########.fr        #
+#    Updated: 2018/03/13 10:29:59 by ddinaut          ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -81,13 +81,13 @@ test:
 
 clean:
 	/bin/rm -f $(OBJ_FILES)
-	make -C libft/ clean
-	make -C ft_printf/ clean
+#	make -C libft/ clean
+#	make -C ft_printf/ clean
 
 fclean: clean
 	/bin/rm -f $(NAME)
 	/bin/rm -f $(SMB_LINK)
-	make -C libft/ fclean
-	make -C ft_printf/ fclean
+#	make -C libft/ fclean
+#	make -C ft_printf/ fclean
 
 re: fclean all

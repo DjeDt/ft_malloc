@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:41:23 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/09 17:46:48 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/03/14 16:03:56 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ t_chunk	*push_chunk_to_area(size_t size);
 **	free func
 */
 void	free(void *ptr);
+void	rebuilt_area_chunk(t_chunk **chunk);
 
 /*
 **	utils func
