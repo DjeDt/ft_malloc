@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:41:23 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/14 16:03:56 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/03/15 15:22:32 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,8 @@ pthread_mutex_t		g_thread;
 */
 void	*malloc(size_t size);
 
+int		check_small_area2(t_area **area, size_t size);
+
 t_chunk	*push_to_smaller_area(t_area *area, size_t size);
 t_chunk	*push_to_large_area(size_t size);
 t_chunk	*push_chunk_to_area(size_t size);
@@ -77,12 +79,13 @@ t_chunk	*push_chunk_to_area(size_t size);
 **	free func
 */
 void	free(void *ptr);
-void	rebuilt_area_chunk(t_chunk **chunk);
+void	rebuilt_area_chunk(t_chunk **chunk, t_chunk **head);
 
 /*
 **	utils func
 */
 size_t	get_power_of_2(size_t size);
+void	print_large();
 void    print_allocated_chunk(t_chunk **lst);
 
 #endif

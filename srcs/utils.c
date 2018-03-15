@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/06 13:55:08 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/14 19:29:31 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/03/15 16:02:06 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,35 @@ void	get_sys_info(void)
 	ft_putendl("\ngetpagesize :");
 	ft_putnbr(getpagesize());
 	ft_putchar('\n');
+}
+
+void	print_large(t_area **large)
+{
+	t_area *tmp;
+
+	tmp = (*large);
+	if (tmp)
+	{
+		while (tmp)
+		{
+			printf("chunk addr = %p\n", tmp->chunk);
+			printf("size = %zu\n", tmp->chunk->size);
+			printf("data addr = %p\n", tmp->chunk->data);
+			printf("statut = %d\n", tmp->chunk->statut);
+			if (tmp->next)
+			{
+				printf("[next node]\n");
+				tmp = tmp->next;
+			}
+			else
+			{
+				printf("end print large one\n");
+				break ;
+			}
+		}
+	}
+	else
+		ft_putendl("empty list");
 }
 
 void	print_allocated_chunk(t_chunk **base)

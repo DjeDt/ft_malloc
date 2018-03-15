@@ -6,13 +6,13 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/28 20:30:59 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/14 19:30:08 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/03/15 14:32:38 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
 
-void	rebuilt_area_chunk(t_chunk **chunk)
+void	rebuilt_area_chunk(t_chunk **chunk, t_chunk **head)
 {
 /*
   link previous and next list chunk from target list
@@ -26,7 +26,8 @@ void	rebuilt_area_chunk(t_chunk **chunk)
 	if ((*chunk)->prev)
 		(*chunk)->prev->next = (*chunk)->next;
 	else
-		g_page.small->chunk = (*chunk)->next;
+		(*head) = (*chunk)->next;
+//		g_page.small->chunk = (*chunk)->next;
 	if ((*chunk)->next)
 		(*chunk)->next->prev = (*chunk)->prev;
 	(*chunk)->next = NULL;
@@ -41,12 +42,12 @@ void	extract_and_push(t_chunk **bin, t_chunk **chunk)
 
 	if ((*bin) == NULL)
 	{
-		rebuilt_area_chunk(chunk);
+		rebuilt_area_chunk(chunk, bin);
 		(*bin) = (*chunk);
 	}
 	else
 	{
-		rebuilt_area_chunk(chunk);
+		rebuilt_area_chunk(chunk, bin);
 		tmp = (*bin);
 		while ((tmp->next != NULL) && (tmp->next->size <= (*chunk)->size))
 			tmp = tmp->next;
@@ -129,6 +130,6 @@ void	free(void *ptr)
 	if (ptr == NULL)
 		return ;
 	search_for_chunk(ptr);
-	printf("PRINT FREE LIST MALLOC\n");
+	ft_putendl("[ [PRINT FREE CHUNK] ]\n\n");
 	print_allocated_chunk(&g_page.bin);
 }
