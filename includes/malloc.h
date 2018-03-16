@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:41:23 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/15 15:22:32 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/03/16 20:01:21 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,8 @@ typedef	struct		s_pages
 # define		FREE	1
 # define		USED	0
 
-# define		TINY_SIZE	128
-# define		MEDIUM_SIZE	1024
+# define		TINY_SIZE	64
+# define		MEDIUM_SIZE	512
 
 # define		AREA_SIZE	sizeof(t_area)
 # define		HEADER_SIZE	sizeof(t_chunk)
@@ -68,12 +68,11 @@ pthread_mutex_t		g_thread;
 **	malloc func
 */
 void	*malloc(size_t size);
+int		check_another_area(t_area **area, size_t size);
 
-int		check_small_area2(t_area **area, size_t size);
-
-t_chunk	*push_to_smaller_area(t_area *area, size_t size);
-t_chunk	*push_to_large_area(size_t size);
-t_chunk	*push_chunk_to_area(size_t size);
+void	*push_to_smaller_area(t_area *area, size_t size);
+void	*push_to_large_area(t_area **area, size_t size);
+void	*push_chunk_to_area(size_t size);
 
 /*
 **	free func
@@ -82,10 +81,8 @@ void	free(void *ptr);
 void	rebuilt_area_chunk(t_chunk **chunk, t_chunk **head);
 
 /*
-**	utils func
+**	realloc func
 */
-size_t	get_power_of_2(size_t size);
-void	print_large();
-void    print_allocated_chunk(t_chunk **lst);
+void	*realloc(void *ptr, size_t size);
 
 #endif

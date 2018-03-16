@@ -6,11 +6,65 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/06 15:27:29 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/15 17:26:16 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/03/16 20:29:06 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
+
+t_area	*create_large_arena(size_t size)
+{
+	t_area *new;
+
+	new = mmap(NULL, size + AREA_SIZE, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
+	if (new == MAP_FAILED)
+	{
+		ft_putendl_fd("allocation error. not enought space left.", 2);
+		return (NULL);
+	}
+	new->size_used = size;
+	new->size_max = size;
+	new->map = new + (sizeof(size_t) * 2);
+	new->chunk = NULL;
+	new->next = NULL;
+	return (new);
+}
+
+void	*push_to_large_area(t_area **area, size_t size)
+{
+	t_area	*tmp;
+
+	if ((*area) == NULL)
+	{
+		(*area) = create_large_arena(size);
+		return ((*area)->map);
+	}
+	tmp = (*area);
+	while (tmp->next != NULL)
+		tmp = tmp->next;
+	tmp->next = create_large_arena(size);
+	return (tmp->next->map);
+}
+
+t_chunk		*extract_chunk_from_bin(t_chunk **lst, size_t size)
+{
+	t_chunk *tmp;
+
+	if ((*lst) == NULL)
+		return (NULL);
+	tmp = (*lst);
+	while (tmp != NULL)
+	{
+		if (tmp->size >= size)
+		{
+			rebuilt_area_chunk(&tmp, lst);
+			tmp->statut = USED;
+			return (tmp);
+		}
+		tmp = tmp->next;
+	}
+	return (NULL);
+}
 
 void	init_chunk(t_chunk **chunk, size_t size)
 {
@@ -39,26 +93,6 @@ void	go_to_the_end(t_chunk **lst, t_chunk **new)
 	}
 }
 
-t_chunk		*extract_chunk_from_bin(t_chunk **lst, size_t size)
-{
-	t_chunk *tmp;
-
-	if ((*lst) == NULL)
-		return (NULL);
-	tmp = (*lst);
-	while (tmp != NULL)
-	{
-		if (tmp->size >= size)
-		{
-			rebuilt_area_chunk(&tmp, lst);
-			tmp->statut = USED;
-			return (tmp);
-		}
-		tmp = tmp->next;
-	}
-	return (NULL);
-}
-
 t_area		*search_area(t_area **area, size_t size, size_t type)
 {
 	t_area	*tmp;
@@ -75,14 +109,17 @@ t_area		*search_area(t_area **area, size_t size, size_t type)
 	}
 	if (tmp == NULL)
 	{
-		if (check_small_area2(&tmp, type) != SUCCESS)
+		ft_putendl("create area");
+		if (check_another_area(&tmp, type) != SUCCESS)
 			return (NULL);
+		ft_putendl("create 1");
 		prev->next = tmp;
+		ft_putendl("create 2");
 	}
 	return (prev->next);
 }
 
-t_chunk		*push_to_smaller_area(t_area *area, size_t size)
+void	*push_to_smaller_area(t_area *area, size_t size)
 {
 	t_chunk	*new;
 	size_t	total;
@@ -90,43 +127,18 @@ t_chunk		*push_to_smaller_area(t_area *area, size_t size)
 	total = size + HEADER_SIZE;
 	if ((new = extract_chunk_from_bin(&g_page.bin, size)) == NULL)
 	{
+		printf("[SIZE SIZE]%zu\n", area->size_used);
 		new = area->map + area->size_used;
+		ft_putendl("push 1");
 		init_chunk(&new, size);
+		ft_putendl("push 2");
 		area->size_used += total;
 	}
 	go_to_the_end(&area->chunk, &new);
 	return (new->data);
 }
 
-t_chunk	*push_to_large_area(t_area **area, size_t size)
-{
-	size_t	total;
-	t_chunk	*new;
-	t_area	*tmp;
-
-	tmp = (*area);
-	while (tmp != NULL)
-	{
-		prev = tmp;
-		tmp = tmp->next;
-	}
-	
-	/*
-	total = size + HEADER_SIZE;
-	save = g_page.large;
-	while (g_page.large->next != NULL)
-		g_page.large = g_page.large->next;
-
-	new = g_page.large->map + HEADER_SIZE;
-	init_chunk(&new, size);
-	g_page.large->size_used += total;
-	g_page.large = save;
-//	go_to_the_end(&g_page.large->chunk, &new);
-*/
-	return (new->data);
-}
-
-t_chunk	*push_chunk_to_area(size_t size)
+void	*push_chunk_to_area(size_t size)
 {
 	void	*ret;
 	t_area	*area;

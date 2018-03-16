@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/28 20:30:59 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/15 14:32:38 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/03/16 16:43:44 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,26 +14,15 @@
 
 void	rebuilt_area_chunk(t_chunk **chunk, t_chunk **head)
 {
-/*
-  link previous and next list chunk from target list
-    ___<__<__
- __/    __    \__
-|  |   | N|-->|  |
-|__|<--|P_|   |__|
-    \-->-->--/
-*/
-
 	if ((*chunk)->prev)
 		(*chunk)->prev->next = (*chunk)->next;
 	else
 		(*head) = (*chunk)->next;
-//		g_page.small->chunk = (*chunk)->next;
 	if ((*chunk)->next)
 		(*chunk)->next->prev = (*chunk)->prev;
 	(*chunk)->next = NULL;
 	(*chunk)->prev = NULL;
 	(*chunk)->statut = FREE;
-
 }
 
 void	extract_and_push(t_chunk **bin, t_chunk **chunk)
@@ -104,7 +93,7 @@ int		search_large_one(void *ptr, t_area **area)
 	a_tmp = (*area);
 	while (a_tmp != NULL)
 	{
-		if (a_tmp->chunk->data == ptr)
+		if (a_tmp->map == ptr)
 		{
 			prev->next = a_tmp->next;
 			munmap(a_tmp, a_tmp->size_max);
@@ -116,20 +105,13 @@ int		search_large_one(void *ptr, t_area **area)
 	return (NOPE);
 }
 
-void	search_for_chunk(void *ptr)
+void	free(void *ptr)
 {
+	if (ptr == NULL)
+		return ;
 	if (search_smaller_one(ptr, &g_page.small) != SUCCESS)
 	{
 		if (search_smaller_one(ptr, &g_page.medium) != SUCCESS)
 			search_large_one(ptr, &g_page.large);
 	}
-}
-
-void	free(void *ptr)
-{
-	if (ptr == NULL)
-		return ;
-	search_for_chunk(ptr);
-	ft_putendl("[ [PRINT FREE CHUNK] ]\n\n");
-	print_allocated_chunk(&g_page.bin);
 }

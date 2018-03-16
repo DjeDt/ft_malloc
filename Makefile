@@ -6,7 +6,7 @@
 #    By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/02/26 16:31:33 by ddinaut           #+#    #+#              #
-#    Updated: 2018/03/13 10:29:59 by ddinaut          ###   ########.fr        #
+#    Updated: 2018/03/16 19:23:11 by ddinaut          ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -44,9 +44,8 @@ END_COL		= \033[0;m
 # Sources #
 SRCS = \
 	malloc.c			\
-	create_new_pages.c	\
 	add_to.c			\
-	utils.c				\
+	realloc.c			\
 	free.c
 
 OBJ_FILES = $(SRC_FILES:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
