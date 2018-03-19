@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:41:23 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/16 20:01:21 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/03/19 19:22:41 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,8 @@ typedef	struct		s_pages
 # define		FREE	1
 # define		USED	0
 
-# define		TINY_SIZE	64
-# define		MEDIUM_SIZE	512
+# define		TINY_SIZE	32
+# define		MEDIUM_SIZE	128
 
 # define		AREA_SIZE	sizeof(t_area)
 # define		HEADER_SIZE	sizeof(t_chunk)
@@ -68,7 +68,7 @@ pthread_mutex_t		g_thread;
 **	malloc func
 */
 void	*malloc(size_t size);
-int		check_another_area(t_area **area, size_t size);
+int		check_another_area(t_area **area, t_area *prev, size_t size);
 
 void	*push_to_smaller_area(t_area *area, size_t size);
 void	*push_to_large_area(t_area **area, size_t size);
@@ -78,8 +78,7 @@ void	*push_chunk_to_area(size_t size);
 **	free func
 */
 void	free(void *ptr);
-void	rebuilt_area_chunk(t_chunk **chunk, t_chunk **head);
-
+void	rebuilt_area_chunk(t_chunk **chunk);
 /*
 **	realloc func
 */

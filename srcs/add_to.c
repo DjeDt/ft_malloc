@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/06 15:27:29 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/16 20:29:06 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/03/19 19:24:25 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,10 @@
 
 t_area	*create_large_arena(size_t size)
 {
-	t_area *new;
+	size_t	total;
+	t_area	*new;
 
+	(void)total;
 	new = mmap(NULL, size + AREA_SIZE, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
 	if (new == MAP_FAILED)
 	{
@@ -24,7 +26,7 @@ t_area	*create_large_arena(size_t size)
 	}
 	new->size_used = size;
 	new->size_max = size;
-	new->map = new + (sizeof(size_t) * 2);
+	new->map = new + AREA_SIZE;
 	new->chunk = NULL;
 	new->next = NULL;
 	return (new);
@@ -39,13 +41,20 @@ void	*push_to_large_area(t_area **area, size_t size)
 		(*area) = create_large_arena(size);
 		return ((*area)->map);
 	}
-	tmp = (*area);
-	while (tmp->next != NULL)
-		tmp = tmp->next;
-	tmp->next = create_large_arena(size);
-	return (tmp->next->map);
+	else
+	{
+		tmp = (*area);
+		while (tmp->next != NULL)
+			tmp = tmp->next;
+		tmp->next = create_large_arena(size);
+		return (tmp->next->map);
+	}
 }
 
+/*
+**	Unused since i removed bin linked list
+**	Use search_free_chunk() instead
+*/
 t_chunk		*extract_chunk_from_bin(t_chunk **lst, size_t size)
 {
 	t_chunk *tmp;
@@ -57,7 +66,26 @@ t_chunk		*extract_chunk_from_bin(t_chunk **lst, size_t size)
 	{
 		if (tmp->size >= size)
 		{
-			rebuilt_area_chunk(&tmp, lst);
+			rebuilt_area_chunk(&tmp);
+			tmp->statut = USED;
+			return (tmp);
+		}
+		tmp = tmp->next;
+	}
+	return (NULL);
+}
+
+t_chunk	*search_free_chunk(t_chunk **lst, size_t size)
+{
+	t_chunk *tmp;
+
+	if ((*lst) == NULL)
+		return (NULL);
+	tmp = (*lst);
+	while (tmp != NULL)
+	{
+		if (tmp->size >= size)
+		{
 			tmp->statut = USED;
 			return (tmp);
 		}
@@ -69,7 +97,7 @@ t_chunk		*extract_chunk_from_bin(t_chunk **lst, size_t size)
 void	init_chunk(t_chunk **chunk, size_t size)
 {
 	(*chunk)->size = size;
-	(*chunk)->data = (*chunk) + sizeof(size_t);
+	(*chunk)->data = (*chunk) + HEADER_SIZE;
 	(*chunk)->statut = USED;
 	(*chunk)->next = NULL;
 	(*chunk)->prev = NULL;
@@ -99,23 +127,16 @@ t_area		*search_area(t_area **area, size_t size, size_t type)
 	t_area	*prev;
 
 	tmp = (*area);
-	prev =  NULL;
+	prev = NULL;
 	while (tmp != NULL)
 	{
-		if ((tmp->size_max - tmp->size_used) >= size)
+		if ((tmp->size_used + size) < tmp->size_max)
 			return (tmp);
 		prev = tmp;
 		tmp = tmp->next;
 	}
-	if (tmp == NULL)
-	{
-		ft_putendl("create area");
-		if (check_another_area(&tmp, type) != SUCCESS)
-			return (NULL);
-		ft_putendl("create 1");
-		prev->next = tmp;
-		ft_putendl("create 2");
-	}
+	if (check_another_area(&prev->next, prev, type) != SUCCESS)
+		return (NULL);
 	return (prev->next);
 }
 
@@ -124,17 +145,15 @@ void	*push_to_smaller_area(t_area *area, size_t size)
 	t_chunk	*new;
 	size_t	total;
 
+	new = NULL;
 	total = size + HEADER_SIZE;
-	if ((new = extract_chunk_from_bin(&g_page.bin, size)) == NULL)
+	if ((new = search_free_chunk(&area->chunk, size)) == NULL)
 	{
-		printf("[SIZE SIZE]%zu\n", area->size_used);
 		new = area->map + area->size_used;
-		ft_putendl("push 1");
 		init_chunk(&new, size);
-		ft_putendl("push 2");
 		area->size_used += total;
+		go_to_the_end(&area->chunk, &new);
 	}
-	go_to_the_end(&area->chunk, &new);
 	return (new->data);
 }
 
@@ -144,17 +163,16 @@ void	*push_chunk_to_area(size_t size)
 	t_area	*area;
 
 	ret = NULL;
+	area = NULL;
 	if (size <= TINY_SIZE)
 	{
-		if ((area = search_area(&g_page.small, size, TINY_SIZE)) == NULL)
-			return (NULL);
-		ret = push_to_smaller_area(area, size);
+		if ((area = search_area(&g_page.small, size, TINY_SIZE)) != NULL)
+			ret = push_to_smaller_area(area, size);
 	}
 	else if (size <= MEDIUM_SIZE)
 	{
-		if ((area = search_area(&g_page.medium, size, MEDIUM_SIZE)) == NULL)
-			return (NULL);
-		ret = push_to_smaller_area(area, size);
+		if ((area = search_area(&g_page.medium, size, MEDIUM_SIZE)) != NULL)
+			ret = push_to_smaller_area(area, size);
 	}
 	else
 		ret = push_to_large_area(&g_page.large ,size);

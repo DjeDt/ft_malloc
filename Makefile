@@ -6,7 +6,7 @@
 #    By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/02/26 16:31:33 by ddinaut           #+#    #+#              #
-#    Updated: 2018/03/16 19:23:11 by ddinaut          ###   ########.fr        #
+#    Updated: 2018/03/19 14:26:53 by ddinaut          ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -63,7 +63,7 @@ $(OBJ_DIR)/%.o : $(SRC_DIR)/%.c
 	$(CC) $(FLAGS) -o $@ -c $< -I$(INC_DIR) 
 
 $(NAME): libft ft_printf $(OBJ_FILES)
-	$(CC) $(FLAG) -shared -o $(NAME) $(OBJ_FILES) -I$(INC_DIR) $(LIBFT) $(LIBPRINTF)
+	$(CC) -fsanitize=address $(FLAG) -shared -o $(NAME) $(OBJ_FILES) -I$(INC_DIR) $(LIBFT) $(LIBPRINTF)
 	rm -f $(SMB_LINK)
 	ln -s $(NAME) $(SMB_LINK)
 
