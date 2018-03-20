@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:41:23 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/19 19:22:41 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/03/20 14:49:26 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,8 @@ typedef	struct		s_pages
 # define		FREE	1
 # define		USED	0
 
-# define		TINY_SIZE	32
-# define		MEDIUM_SIZE	128
+# define		TINY_SIZE	128
+# define		MEDIUM_SIZE	512
 
 # define		AREA_SIZE	sizeof(t_area)
 # define		HEADER_SIZE	sizeof(t_chunk)

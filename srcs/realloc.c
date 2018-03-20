@@ -6,36 +6,38 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/16 16:56:42 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/16 19:57:07 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/03/20 18:07:34 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
 
+/*
+**	check if chunk can extend to size
+**	if not, free() and malloc()
+*/
 void	*check_if_enough_space(t_chunk **chunk, size_t size, void *ptr)
 {
-	/*
-	**	check if chunk can extend to size
-	**	if not, free() and malloc()
-	*/
-	size_t	count;
-	char	*tmp;
+	t_chunk	*tmp;
+	t_chunk	*ret;
 
-	count = (*chunk)->size;
-	tmp = (*chunk)->data;
-	while (count < size)
+	tmp = (*chunk);
+	if (tmp->next != NULL)
 	{
-		if ((tmp + count) != '\0')
+		if ((ptr + size) < tmp->next->data)
 		{
-			free(ptr);
-			ptr = malloc(size);
-//			ft_memcpy(ptr, (*chunk)->dst);
-			return (ptr);
+			tmp->size = size;
+			return (tmp);
 		}
-		size++;
 	}
-	(*chunk)->size = size;
-	return ((*chunk)->data);
+	else
+	{
+		ret = malloc(size);
+		ft_memcpy(ret, ptr, tmp->size);
+		free(ptr);
+		return (ret);
+	}
+	return (NULL);
 }
 
 void	*search_in_this_map(t_chunk **chunk, void *ptr, size_t size)
@@ -52,20 +54,23 @@ void	*search_in_this_map(t_chunk **chunk, void *ptr, size_t size)
 		}
 		tmp = tmp->next;
 	}
-	return (ptr);
+	return (NULL);
 }
 
 void	*search_smaller_ptr(t_area **area, void *ptr, size_t size)
 {
-	t_area *tmp;
+	t_area	*tmp;
+	void	*ret;
 
+	ret = NULL;
 	tmp = (*area);
 	if (tmp != NULL)
 	{
-		search_in_this_map(&tmp->chunk, ptr, size);
+		if ((ret = search_in_this_map(&tmp->chunk, ptr, size)) != NULL)
+			return (ret);
 		tmp = tmp->next;
 	}
-	return (ptr);
+	return (NULL);
 }
 
 void	*search_large_ptr(t_area **area, void *ptr, size_t size)
@@ -77,13 +82,13 @@ void	*search_large_ptr(t_area **area, void *ptr, size_t size)
 	{
 		if (tmp->map == ptr)
 		{
-			ft_putendl("found large");
-			(void)size;
-			return (tmp);
+			free(ptr);
+			ptr = malloc(size);
+			return (ptr);
 		}
 		tmp = tmp->next;
 	}
-	return (ptr);
+	return (NULL);
 }
 
 void	*search_ptr(void *ptr, size_t size)
@@ -93,9 +98,15 @@ void	*search_ptr(void *ptr, size_t size)
 	if ((chunk = search_smaller_ptr(&g_page.small, ptr, size)) == NULL)
 	{
 		if ((chunk = search_smaller_ptr(&g_page.medium, ptr, size)) == NULL)
-			chunk = search_large_ptr(&g_page.large, ptr, size);
+		{
+			if ((chunk = search_large_ptr(&g_page.large, ptr, size)) == NULL)
+			{
+				ptr = malloc(size);
+				return (ptr);
+			}
+		}
 	}
-	return (ptr);
+	return (chunk->data);
 }
 
 void	print_chunk(t_chunk **chunk)
@@ -106,6 +117,7 @@ void	print_chunk(t_chunk **chunk)
 	while (tmp != NULL)
 	{
 		printf("chunk addr = %p\n", tmp);
+		printf("chunk statut = %d\n", tmp->statut);
 		printf("chunk size = %zu\n", tmp->size);
 		tmp = tmp->next;
 	}
@@ -114,6 +126,9 @@ void	print_chunk(t_chunk **chunk)
 
 void	*realloc(void *ptr, size_t size)
 {
+	ft_putstr("[realloc] : ");
+	ft_putnbr(size);
+	ft_putchar('\n');
 	if (ptr == NULL)
 		ptr = malloc(size);
 	else if (ptr != NULL && size == 0)
@@ -123,6 +138,6 @@ void	*realloc(void *ptr, size_t size)
 	}
 	else
 		ptr = search_ptr(ptr, size);
-	print_chunk(&g_page.small->chunk);
+//	print_chunk(&g_page.small->chunk);
 	return (ptr);
 }

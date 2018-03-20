@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/28 20:30:59 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/19 19:22:14 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/03/20 18:06:26 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ void	rebuilt_area_chunk(t_chunk **chunk)
 		(*chunk)->prev->next = (*chunk)->next;
 	if ((*chunk)->next)
 		(*chunk)->next->prev = (*chunk)->prev;
-
 	(*chunk)->next = NULL;
 	(*chunk)->prev = NULL;
 	(*chunk)->statut = FREE;
@@ -108,12 +107,12 @@ int		search_large_one(void *ptr, t_area **area)
 
 	tmp = (*area);
 	prev = NULL;
-	while (tmp != NULL && (tmp->map != ptr))
+	while ((tmp != NULL) && (tmp->map != ptr))
 	{
 		prev = tmp;
 		tmp = tmp->next;
 	}
-	if (tmp == NULL)
+	if ((tmp == NULL) ||  (prev == NULL))
 		return (NOPE);
 	if ((prev == NULL) && (tmp->next == NULL))
 	{
@@ -122,7 +121,8 @@ int		search_large_one(void *ptr, t_area **area)
 	}
 	else
 	{
-		prev->next = tmp->next;
+		if (prev)
+			prev->next = tmp->next;
 		munmap(tmp, tmp->size_max);
 	}
 	return (SUCCESS);
@@ -132,7 +132,10 @@ void	free(void *ptr)
 {
 	if (ptr == NULL)
 		return ;
+	ft_putendl("free");
 	if (search_smaller_one(ptr, &g_page.small) != SUCCESS)
+	{
 		if (search_smaller_one(ptr, &g_page.medium) != SUCCESS)
 			search_large_one(ptr, &g_page.large);
+	}
 }

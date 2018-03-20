@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:39:27 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/19 19:33:24 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/03/20 18:07:47 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,19 +139,17 @@ void	*malloc(size_t size)
 {
 	void	*ret;
 
-	if (!size)
-		return (NULL);
-	ret = NULL;
+	ft_putstr("malloc : ");
+	ft_putnbr(size);
+	ft_putchar('\n');
+	if (size == 0)
+		return (malloc(1));
 	if (create_arena(size) != SUCCESS)
 		return (NULL);
 	ret = push_chunk_to_area(size);
-	
-	if (g_page.small)
-		print_all(&g_page.small->chunk);
-	if (g_page.medium)
-		print_all(&g_page.medium->chunk);
-	if (g_page.large)
-		print_large(&g_page.large);
-	
 	return (ret);
 }
+
+
+
+

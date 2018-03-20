@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/06 15:27:29 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/19 19:24:25 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/03/20 17:57:39 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,8 @@
 
 t_area	*create_large_arena(size_t size)
 {
-	size_t	total;
 	t_area	*new;
 
-	(void)total;
 	new = mmap(NULL, size + AREA_SIZE, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
 	if (new == MAP_FAILED)
 	{
@@ -45,7 +43,9 @@ void	*push_to_large_area(t_area **area, size_t size)
 	{
 		tmp = (*area);
 		while (tmp->next != NULL)
+		{
 			tmp = tmp->next;
+		}
 		tmp->next = create_large_arena(size);
 		return (tmp->next->map);
 	}
@@ -84,7 +84,7 @@ t_chunk	*search_free_chunk(t_chunk **lst, size_t size)
 	tmp = (*lst);
 	while (tmp != NULL)
 	{
-		if (tmp->size >= size)
+		if ((tmp->size >= size) && (tmp->statut == FREE))
 		{
 			tmp->statut = USED;
 			return (tmp);
@@ -175,6 +175,8 @@ void	*push_chunk_to_area(size_t size)
 			ret = push_to_smaller_area(area, size);
 	}
 	else
+	{
 		ret = push_to_large_area(&g_page.large ,size);
+	}
 	return (ret);
 }
