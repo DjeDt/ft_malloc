@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:41:23 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/20 14:49:26 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/03/21 19:11:44 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,20 +68,36 @@ pthread_mutex_t		g_thread;
 **	malloc func
 */
 void	*malloc(size_t size);
-int		check_another_area(t_area **area, t_area *prev, size_t size);
 
-void	*push_to_smaller_area(t_area *area, size_t size);
-void	*push_to_large_area(t_area **area, size_t size);
 void	*push_chunk_to_area(size_t size);
+t_area	*create_new_area(size_t size, t_area *prev);
+t_area	*create_large_area(size_t size);
+
+t_area	*search_small_area(size_t size);
+t_area	*search_medium_area(size_t size);
+void	*search_free_chunk(t_area *area, size_t size);
 
 /*
 **	free func
 */
 void	free(void *ptr);
-void	rebuilt_area_chunk(t_chunk **chunk);
+
 /*
 **	realloc func
 */
 void	*realloc(void *ptr, size_t size);
 
+void	count_zone(t_area **area);
+void	print_all(t_chunk **chunk);
+void	ft_putaddr(void *ptr);
+
 #endif
+
+
+
+
+
+
+
+
+

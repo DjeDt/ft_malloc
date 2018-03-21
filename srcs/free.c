@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/28 20:30:59 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/20 18:06:26 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/03/21 19:31:47 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,79 +63,79 @@ void	extract_and_push(t_chunk **bin, t_chunk **chunk)
 	}
 }
 
-int		search_in_page(t_chunk **lst, void *ptr)
+static int	search_large(t_area *area, void *ptr)
 {
-	t_chunk	*tmp;
-
-	if ((*lst) == NULL)
-		return (ERROR);
-	tmp = (*lst);
-	while (tmp != NULL)
-	{
-		if (tmp->data == ptr)
-		{
-			/*
-			**	Unused since i removed double linked list :
-			** extract_and_push(&g_page.bin, &tmp);
-			*/
-			tmp->statut = FREE;
-			return (SUCCESS);
-		}
-		tmp = tmp->next;
-	}
-	return (NOPE);
-}
-
-int		search_smaller_one(void *ptr, t_area **area)
-{
-	t_area	*a_tmp;
-
-	a_tmp = (*area);
-	while (a_tmp != NULL)
-	{
-		if (search_in_page(&a_tmp->chunk, ptr) == SUCCESS)
-			return (SUCCESS);
-		a_tmp = a_tmp->next;
-	}
-	return (NOPE);
-}
-
-int		search_large_one(void *ptr, t_area **area)
-{
-	t_area	*tmp;
+	t_area	*save;
 	t_area	*prev;
 
-	tmp = (*area);
 	prev = NULL;
-	while ((tmp != NULL) && (tmp->map != ptr))
+	save = area;
+	ft_putendl("test1");
+	while (save != NULL)
 	{
-		prev = tmp;
-		tmp = tmp->next;
+		if (save->map == ptr)
+		{
+			if (prev != NULL)
+				prev->next = save->next;
+			else
+				area = save->next;
+			munmap(save, save->size_max);
+			return (SUCCESS);
+		}
+		prev = save;
+		save = save->next;
 	}
-	if ((tmp == NULL) ||  (prev == NULL))
-		return (NOPE);
-	if ((prev == NULL) && (tmp->next == NULL))
+	return (NOPE);
+}
+
+static int	search_for_chunk(t_chunk *list, void *ptr)
+{
+	t_chunk *save;
+
+	save = list;
+	ft_putendl("test2");
+	while (save != NULL)
 	{
-		munmap(tmp, tmp->size_max);
-		(*area) = NULL;
+		ft_putendl("test22");
+		if (save->data == ptr)
+		{
+			ft_putendl("test34");
+			save->statut = FREE;
+			return (SUCCESS);
+		}
+		save = save->next;
 	}
-	else
+	return (NOPE);
+}
+
+static int	search_smaller(t_area *area, void *ptr)
+{
+	t_area *save;
+
+	save = area;
+	ft_putendl("test3");
+	while (save != NULL)
 	{
-		if (prev)
-			prev->next = tmp->next;
-		munmap(tmp, tmp->size_max);
+		if (search_for_chunk(save->chunk, ptr) == SUCCESS)
+			return (SUCCESS);
+		save = save->next;
 	}
-	return (SUCCESS);
+	return (NOPE);
 }
 
 void	free(void *ptr)
 {
 	if (ptr == NULL)
 		return ;
-	ft_putendl("free");
-	if (search_smaller_one(ptr, &g_page.small) != SUCCESS)
-	{
-		if (search_smaller_one(ptr, &g_page.medium) != SUCCESS)
-			search_large_one(ptr, &g_page.large);
-	}
+	ft_putstr("[free] : ");
+	int ret; /* debug */
+
+	if ((ret = search_smaller(g_page.small, ptr)) != SUCCESS)
+		if ((ret = search_smaller(g_page.medium, ptr)) != SUCCESS)
+			ret = search_large(g_page.large, ptr);
+
+	if (ret == SUCCESS)
+		ft_putendl("success");
+	else
+		ft_putendl("nope");
 }

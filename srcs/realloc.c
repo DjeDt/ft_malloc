@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/16 16:56:42 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/20 18:07:34 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/03/21 19:29:35 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,112 +16,76 @@
 **	check if chunk can extend to size
 **	if not, free() and malloc()
 */
-void	*check_if_enough_space(t_chunk **chunk, size_t size, void *ptr)
-{
-	t_chunk	*tmp;
-	t_chunk	*ret;
 
-	tmp = (*chunk);
-	if (tmp->next != NULL)
+static int		enough_space(t_chunk *chunk, size_t size)
+{
+	if (chunk->next != NULL)
 	{
-		if ((ptr + size) < tmp->next->data)
-		{
-			tmp->size = size;
-			return (tmp);
-		}
+		if ((chunk->data + size) < chunk->next->data)
+			return (SUCCESS);
 	}
-	else
-	{
-		ret = malloc(size);
-		ft_memcpy(ret, ptr, tmp->size);
-		free(ptr);
-		return (ret);
-	}
-	return (NULL);
+	return (NOPE);
 }
 
-void	*search_in_this_map(t_chunk **chunk, void *ptr, size_t size)
+static void		*search_in_this_one(t_chunk *chunk, void *ptr, size_t size)
 {
-	t_chunk *tmp;
-
-	tmp = (*chunk);
-	while (tmp != NULL)
-	{
-		if (tmp->data == ptr)
-		{
-			ptr = check_if_enough_space(&tmp, size, ptr);
-			return (tmp->data);
-		}
-		tmp = tmp->next;
-	}
-	return (NULL);
-}
-
-void	*search_smaller_ptr(t_area **area, void *ptr, size_t size)
-{
-	t_area	*tmp;
 	void	*ret;
+	t_chunk	*save;
 
-	ret = NULL;
-	tmp = (*area);
-	if (tmp != NULL)
+	save = chunk;
+	while (save != NULL)
 	{
-		if ((ret = search_in_this_map(&tmp->chunk, ptr, size)) != NULL)
-			return (ret);
-		tmp = tmp->next;
-	}
-	return (NULL);
-}
-
-void	*search_large_ptr(t_area **area, void *ptr, size_t size)
-{
-	t_area *tmp;
-
-	tmp = (*area);
-	while (tmp != NULL)
-	{
-		if (tmp->map == ptr)
+		if (save->data == ptr)
 		{
-			free(ptr);
-			ptr = malloc(size);
-			return (ptr);
-		}
-		tmp = tmp->next;
-	}
-	return (NULL);
-}
-
-void	*search_ptr(void *ptr, size_t size)
-{
-	t_chunk	*chunk;
-
-	if ((chunk = search_smaller_ptr(&g_page.small, ptr, size)) == NULL)
-	{
-		if ((chunk = search_smaller_ptr(&g_page.medium, ptr, size)) == NULL)
-		{
-			if ((chunk = search_large_ptr(&g_page.large, ptr, size)) == NULL)
+			if (enough_space(save, size) == SUCCESS)
 			{
-				ptr = malloc(size);
-				return (ptr);
+				save->size = size;
+				return (save->data);
+			}
+			else
+			{
+				ret = malloc(size);
+				ret = ft_memcpy(ret, ptr, save->size);
+				free(ptr);
+				return (ret);
 			}
 		}
+		save = save->next;
 	}
-	return (chunk->data);
+	return (NULL);
 }
 
-void	print_chunk(t_chunk **chunk)
+static void		*search_for_chunk(t_area *area, void *ptr, size_t size)
 {
-	t_chunk *tmp;
+	void	*ret;
+	t_area	*save;
 
-	tmp = (*chunk);
-	while (tmp != NULL)
+	save = area;
+	while (save != NULL)
 	{
-		printf("chunk addr = %p\n", tmp);
-		printf("chunk statut = %d\n", tmp->statut);
-		printf("chunk size = %zu\n", tmp->size);
-		tmp = tmp->next;
+		if ((ret = search_in_this_one(save->chunk, ptr, size)) != NULL)
+			return (ret);
+		save = save->next;
 	}
-	printf("\n[end of print chunk]\n");
+	return (NULL);
+}
+
+static void		*check_area(void *ptr, size_t size)
+{
+	void	*ret;
+
+	if ((ret = search_for_chunk(g_page.small, ptr, size)) != NULL)
+		return (ret);
+	else if ((ret = search_for_chunk(g_page.medium, ptr, size)) != NULL)
+		return (ret);
+	else
+	{
+		/* large chunk can't be reallocated since they have to be munmap() */
+		ret = malloc(size);
+		ret = ft_memcpy(ret, ptr, size);
+		free(ptr);
+	}
+	return (ret);
 }
 
 void	*realloc(void *ptr, size_t size)
@@ -129,15 +93,17 @@ void	*realloc(void *ptr, size_t size)
 	ft_putstr("[realloc] : ");
 	ft_putnbr(size);
 	ft_putchar('\n');
+
+	if (size == 0)
+		return (realloc(ptr, 16));
 	if (ptr == NULL)
 		ptr = malloc(size);
 	else if (ptr != NULL && size == 0)
 	{
 		free(ptr);
-		ptr = malloc(1);
+		ptr = malloc(16);
 	}
 	else
-		ptr = search_ptr(ptr, size);
-//	print_chunk(&g_page.small->chunk);
+		ptr = check_area(ptr, size);
 	return (ptr);
 }

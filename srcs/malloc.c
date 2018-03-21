@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:39:27 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/20 18:07:47 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/03/21 19:11:02 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,26 +56,6 @@ int		check_medium_area(void)
 	return (SUCCESS);
 }
 
-int		check_another_area(t_area **area, t_area *prev, size_t size)
-{
-	size_t	total;
-
-	total = size * getpagesize();
-	(*area) = mmap(NULL, total + AREA_SIZE, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
-	if ((*area) == MAP_FAILED)
-	{
-		ft_putendl_fd("allocation error. not enought space left.", 2);
-		return (ERROR);
-	}
-	(*area)->size_used = 0;
-	(*area)->size_max = total;
-	(*area)->map = (*area) + AREA_SIZE;
-	(*area)->chunk = NULL;
-	(*area)->next = NULL;
-	prev->next = (*area);
-	return (SUCCESS);
-}
-
 int		create_arena(size_t size)
 {
 	int	ret;
@@ -88,68 +68,18 @@ int		create_arena(size_t size)
 	return (ret);
 }
 
-void	count_zone(t_area **area)
-{
-	size_t	count;
-	t_area *tmp;
-
-	count = 0;
-	tmp = (*area);
-	while (tmp != NULL)
-	{
-		count++;
-		tmp = tmp->next;
-	}
-	ft_putstr("there is ");
-	ft_putnbr(count);
-	ft_putendl(" area");
-}
-
-void	print_all(t_chunk **chunk)
-{
-	int		count;
-	t_chunk *tmp;
-
-	count = 0;
-	tmp = (*chunk);
-	while (tmp != NULL)
-	{
-		printf("[chunk %d] size = %zu | statut = %d\n", count, tmp->size, tmp->statut);
-		count++;
-		tmp = tmp->next;
-	}
-}
-
-void	print_large(t_area **area)
-{
-	size_t	count;
-	t_area *tmp;
-
-	count = 0;
-	tmp = (*area);
-	while (tmp != NULL)
-	{
-		printf("[chunk %zu] : size = %zu\n", count, tmp->size_max);
-		count++;
-		tmp = tmp->next;
-	}
-}
-
 void	*malloc(size_t size)
 {
 	void	*ret;
 
-	ft_putstr("malloc : ");
+	ft_putstr("[malloc] : ");
 	ft_putnbr(size);
 	ft_putchar('\n');
+
 	if (size == 0)
-		return (malloc(1));
+		return (malloc(16));
 	if (create_arena(size) != SUCCESS)
 		return (NULL);
 	ret = push_chunk_to_area(size);
 	return (ret);
 }
-
-
-
-
