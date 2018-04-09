@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/21 14:42:26 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/21 19:11:15 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/04/09 13:57:44 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	*push_chunk(t_area *area, size_t size)
 
 	new = area->map + area->size_used;
 	init_chunk(&new, size);
-	area->size_used += (size + HEADER_SIZE);
+	area->size_used += size;
 	tmp = area->chunk;
 	if (tmp == NULL)
 		area->chunk = new;
@@ -38,7 +38,7 @@ void	*push_chunk(t_area *area, size_t size)
 			tmp = tmp->next;
 		tmp->next = new;
 	}
-	return (new->data);
+	return (new);
 }
 
 void	*push_large(t_area *area, size_t size)
@@ -56,7 +56,7 @@ void	*push_large(t_area *area, size_t size)
 			tmp = tmp->next;
 		tmp->next = new;
 	}
-	return (new->map);
+	return (new);
 }
 
 void	*push_chunk_to_area(size_t size)
@@ -82,5 +82,5 @@ void	*push_chunk_to_area(size_t size)
 	}
 	else
 		ret = push_large(g_page.large, size);
-	return (ret);
+	return (ret + HEADER_SIZE);
 }

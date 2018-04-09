@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/16 16:56:42 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/21 19:29:35 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/04/09 13:13:56 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ static void		*check_area(void *ptr, size_t size)
 	{
 		/* large chunk can't be reallocated since they have to be munmap() */
 		ret = malloc(size);
-		ret = ft_memcpy(ret, ptr, size);
+		ret = memcpy(ret, ptr, size);
 		free(ptr);
 	}
 	return (ret);
@@ -90,18 +90,27 @@ static void		*check_area(void *ptr, size_t size)
 
 void	*realloc(void *ptr, size_t size)
 {
-	ft_putstr("[realloc] : ");
-	ft_putnbr(size);
-	ft_putchar('\n');
+	void	*ret;
 
-	if (size == 0)
-		return (realloc(ptr, 16));
+	ret = NULL;
+	if (DEBUG == 1)
+	{
+		ft_putstr("[realloc] : ");
+		ft_putnbr(hmt++);
+		ft_putstr(" | size = ");
+		ft_putnbr(size);
+		ft_putchar('\n');
+	}
+
+	size = ALIGN(size);
 	if (ptr == NULL)
 		ptr = malloc(size);
 	else if (ptr != NULL && size == 0)
 	{
+		ret = malloc(16);
+		ret = memcpy(ret, ptr, size);
 		free(ptr);
-		ptr = malloc(16);
+		return (ret);
 	}
 	else
 		ptr = check_area(ptr, size);

@@ -6,62 +6,11 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/28 20:30:59 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/21 19:31:47 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/04/09 13:48:55 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
-
-/*
-**	Unused since i removed bin linked list
-*/
-void	rebuilt_area_chunk(t_chunk **chunk)
-{
-	if ((*chunk)->prev)
-		(*chunk)->prev->next = (*chunk)->next;
-	if ((*chunk)->next)
-		(*chunk)->next->prev = (*chunk)->prev;
-	(*chunk)->next = NULL;
-	(*chunk)->prev = NULL;
-	(*chunk)->statut = FREE;
-}
-
-/*
-**	Unused since i removed bin linked list
-*/
-void	extract_and_push(t_chunk **bin, t_chunk **chunk)
-{
-	t_chunk *tmp;
-
-	rebuilt_area_chunk(chunk);
-	if ((*bin) == NULL)
-		(*bin) = (*chunk);
-	else
-	{
-		tmp = (*bin);
-		while (tmp->next != NULL)
-		{
-			if (tmp->size <= (*chunk)->size)
-				break ;
-			tmp = tmp->next;
-		}
-
-		tmp->next = (*chunk);
-		if (tmp->next == NULL)
-		{
-			(*chunk)->prev = tmp;
-			return ;
-		}
-		(*chunk)->prev = tmp;
-		if (tmp->next)
-		{
-			(*chunk)->next = tmp->next->next;
-			tmp->next->prev = (*chunk);
-		}
-		else
-			(*chunk)->next = NULL;
-	}
-}
 
 static int	search_large(t_area *area, void *ptr)
 {
@@ -70,7 +19,6 @@ static int	search_large(t_area *area, void *ptr)
 
 	prev = NULL;
 	save = area;
-	ft_putendl("test1");
 	while (save != NULL)
 	{
 		if (save->map == ptr)
@@ -79,7 +27,13 @@ static int	search_large(t_area *area, void *ptr)
 				prev->next = save->next;
 			else
 				area = save->next;
-			munmap(save, save->size_max);
+			int ret = munmap(save, save->size_max);
+			if (DEBUG == 1)
+			{
+				ft_putstr("[free] munmap : ret = ");
+				ft_putnbr(ret);
+				ft_putchar('\n');
+			}
 			return (SUCCESS);
 		}
 		prev = save;
@@ -93,13 +47,10 @@ static int	search_for_chunk(t_chunk *list, void *ptr)
 	t_chunk *save;
 
 	save = list;
-	ft_putendl("test2");
 	while (save != NULL)
 	{
-		ft_putendl("test22");
 		if (save->data == ptr)
 		{
-			ft_putendl("test34");
 			save->statut = FREE;
 			return (SUCCESS);
 		}
@@ -111,13 +62,15 @@ static int	search_for_chunk(t_chunk *list, void *ptr)
 static int	search_smaller(t_area *area, void *ptr)
 {
 	t_area *save;
+	t_area *prev;
 
 	save = area;
-	ft_putendl("test3");
+	prev = NULL;
 	while (save != NULL)
 	{
 		if (search_for_chunk(save->chunk, ptr) == SUCCESS)
 			return (SUCCESS);
+		prev = save;
 		save = save->next;
 	}
 	return (NOPE);
@@ -127,15 +80,28 @@ void	free(void *ptr)
 {
 	if (ptr == NULL)
 		return ;
-	ft_putstr("[free] : ");
-	int ret; /* debug */
+
+	int ret = 0; /* debug */
+	if (DEBUG == 1)
+	{
+		ft_putstr("[free] : ");
+		ft_putnbr(hmt++);
+		ft_putchar('\n');
+	}
+
 
 	if ((ret = search_smaller(g_page.small, ptr)) != SUCCESS)
 		if ((ret = search_smaller(g_page.medium, ptr)) != SUCCESS)
+		{
 			ret = search_large(g_page.large, ptr);
+			print_large();
+		}
 
-	if (ret == SUCCESS)
-		ft_putendl("success");
-	else
-		ft_putendl("nope");
+	if (DEBUG == 1)
+	{
+		if (ret == SUCCESS)
+			ft_putendl("success");
+		else
+			ft_putendl("nope");
+	}
 }

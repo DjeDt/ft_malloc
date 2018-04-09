@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:41:23 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/21 19:11:44 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/04/09 13:58:22 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,9 @@ typedef	struct		s_pages
 
 }					t_pages;
 
+# define		ALIGN_MOD(x) ((x % 16) || !x) ? (x + 16) - (x % 16) : x
+# define		ALIGN(x) ALIGN_MOD((x + HEADER_SIZE))
+
 # define		SUCCESS	1
 # define		NOPE	0
 # define		ERROR	-1
@@ -60,6 +63,9 @@ typedef	struct		s_pages
 
 # define		AREA_SIZE	sizeof(t_area)
 # define		HEADER_SIZE	sizeof(t_chunk)
+
+#define DEBUG 0
+static size_t hmt;
 
 t_pages				g_page;
 pthread_mutex_t		g_thread;
@@ -87,10 +93,11 @@ void	free(void *ptr);
 */
 void	*realloc(void *ptr, size_t size);
 
+/* need to sup */
 void	count_zone(t_area **area);
 void	print_all(t_chunk **chunk);
 void	ft_putaddr(void *ptr);
-
+void	print_large(void);
 #endif
 
 

@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:39:27 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/21 19:11:02 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/04/09 13:06:38 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int		check_small_area(void)
 
 	if (g_page.small == NULL)
 	{
-		total = TINY_SIZE * getpagesize();
+		total = TINY_SIZE * 100;
 		g_page.small = mmap(NULL, total + AREA_SIZE, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
 		if (g_page.small == MAP_FAILED)
 		{
@@ -40,7 +40,7 @@ int		check_medium_area(void)
 
 	if (g_page.medium == NULL)
 	{
-		total = MEDIUM_SIZE * getpagesize();
+		total = MEDIUM_SIZE * 100;
 		g_page.medium = mmap(NULL, total + AREA_SIZE, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
 		if (g_page.medium == MAP_FAILED)
 		{
@@ -72,12 +72,17 @@ void	*malloc(size_t size)
 {
 	void	*ret;
 
-	ft_putstr("[malloc] : ");
-	ft_putnbr(size);
-	ft_putchar('\n');
+	if (DEBUG == 1)
+	{
+		ft_putstr("[malloc] : ");
+		ft_putnbr(hmt++);
+		ft_putstr(" | size = ");
+		ft_putnbr(size);
+		ft_putchar('\n');
+	}
 
-	if (size == 0)
-		return (malloc(16));
+	size = ALIGN(size);
+
 	if (create_arena(size) != SUCCESS)
 		return (NULL);
 	ret = push_chunk_to_area(size);

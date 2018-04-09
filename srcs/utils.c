@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/21 17:23:57 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/21 17:28:56 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/04/05 17:27:26 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,23 @@ void	count_zone(t_area **area)
 	ft_putstr("there is ");
 	ft_putnbr(count);
 	ft_putendl(" area");
+}
+
+void	print_large(void)
+{
+	int		count = 0;
+	t_area	*tmp;
+
+	tmp = g_page.large;
+	while (tmp != NULL)
+	{
+		ft_putstr("chunk nbr : ");
+		ft_putnbr(count++);
+		ft_putstr(" size = ");
+		ft_putnbr(tmp->size_max);
+		ft_putchar('\n');
+		tmp = tmp->next;
+	}
 }
 
 void	print_all(t_chunk **chunk)
