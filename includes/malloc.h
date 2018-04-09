@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:41:23 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/04/09 13:58:22 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/04/09 19:08:32 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,8 @@
 
 typedef struct		s_chunk
 {
-	size_t			size;			/* size of current data chunk */
-	void			*data;
 	int				statut;			/* is available ? */
+	size_t			size;			/* size of current data chunk */
 //	size_t			safe;			/* to check if data does not differ */
 	struct s_chunk	*next;
 	struct s_chunk	*prev;
@@ -34,7 +33,6 @@ typedef struct		s_area
 {
 	size_t			size_used;
 	size_t			size_max;
-	void			*map;
 	t_chunk			*chunk;
 	struct s_area	*next;
 }					t_area;
@@ -44,7 +42,6 @@ typedef	struct		s_pages
 	t_area			*small;
 	t_area			*medium;
 	t_area			*large;
-	t_chunk			*bin;		/* used to track freed chunk */
 
 }					t_pages;
 
@@ -94,17 +91,10 @@ void	free(void *ptr);
 void	*realloc(void *ptr, size_t size);
 
 /* need to sup */
+
 void	count_zone(t_area **area);
 void	print_all(t_chunk **chunk);
 void	ft_putaddr(void *ptr);
 void	print_large(void);
+
 #endif
-
-
-
-
-
-
-
-
-

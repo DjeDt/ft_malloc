@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/21 14:42:26 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/04/09 13:57:44 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/04/09 18:29:17 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 void	init_chunk(t_chunk **chunk, size_t size)
 {
 	(*chunk)->size = size;
-	(*chunk)->data = (*chunk) + HEADER_SIZE;
 	(*chunk)->statut = USED;
 	(*chunk)->next = NULL;
 	(*chunk)->prev = NULL;
@@ -26,7 +25,7 @@ void	*push_chunk(t_area *area, size_t size)
 	t_chunk	*tmp;
 	t_chunk *new;
 
-	new = area->map + area->size_used;
+	new = (void*)(area + AREA_SIZE) + area->size_used;
 	init_chunk(&new, size);
 	area->size_used += size;
 	tmp = area->chunk;
@@ -38,7 +37,7 @@ void	*push_chunk(t_area *area, size_t size)
 			tmp = tmp->next;
 		tmp->next = new;
 	}
-	return (new);
+	return (new + HEADER_SIZE);
 }
 
 void	*push_large(t_area *area, size_t size)
@@ -66,6 +65,7 @@ void	*push_chunk_to_area(size_t size)
 
 	ret = NULL;
 	area = NULL;
+
 	if (size <= TINY_SIZE)
 	{
 		if ((ret = search_free_chunk(g_page.small, size)) != NULL)
@@ -82,5 +82,6 @@ void	*push_chunk_to_area(size_t size)
 	}
 	else
 		ret = push_large(g_page.large, size);
-	return (ret + HEADER_SIZE);
+
+	return (ret);
 }

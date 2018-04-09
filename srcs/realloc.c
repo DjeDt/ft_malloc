@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/16 16:56:42 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/04/09 13:13:56 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/04/09 19:49:27 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static int		enough_space(t_chunk *chunk, size_t size)
 {
 	if (chunk->next != NULL)
 	{
-		if ((chunk->data + size) < chunk->next->data)
+		if ((chunk + HEADER_SIZE + size) < (chunk->next + HEADER_SIZE))
 			return (SUCCESS);
 	}
 	return (NOPE);
@@ -35,17 +35,18 @@ static void		*search_in_this_one(t_chunk *chunk, void *ptr, size_t size)
 	save = chunk;
 	while (save != NULL)
 	{
-		if (save->data == ptr)
+		if (save + HEADER_SIZE == ptr)
 		{
+			ft_putendl("test 3");
 			if (enough_space(save, size) == SUCCESS)
 			{
 				save->size = size;
-				return (save->data);
+				return (save + HEADER_SIZE);
 			}
 			else
 			{
 				ret = malloc(size);
-				ret = ft_memcpy(ret, ptr, save->size);
+//				ret = ft_memcpy(ret, ptr, size); /* ft_memcpy cause sagfulat */
 				free(ptr);
 				return (ret);
 			}
@@ -74,25 +75,25 @@ static void		*check_area(void *ptr, size_t size)
 {
 	void	*ret;
 
+	ret = NULL;
 	if ((ret = search_for_chunk(g_page.small, ptr, size)) != NULL)
 		return (ret);
 	else if ((ret = search_for_chunk(g_page.medium, ptr, size)) != NULL)
 		return (ret);
 	else
 	{
-		/* large chunk can't be reallocated since they have to be munmap() */
+		/*
+		** if can't realloc in smaller area, then have to malloc()
+		** large chunk can't be reallocated since they have to be munmap() */
 		ret = malloc(size);
-		ret = memcpy(ret, ptr, size);
+//		ft_memcpy(ret, ptr, size); /* problem here, create segfault everytime*/
 		free(ptr);
+		return (ret);
 	}
-	return (ret);
 }
 
 void	*realloc(void *ptr, size_t size)
 {
-	void	*ret;
-
-	ret = NULL;
 	if (DEBUG == 1)
 	{
 		ft_putstr("[realloc] : ");
@@ -102,17 +103,9 @@ void	*realloc(void *ptr, size_t size)
 		ft_putchar('\n');
 	}
 
-	size = ALIGN(size);
 	if (ptr == NULL)
 		ptr = malloc(size);
-	else if (ptr != NULL && size == 0)
-	{
-		ret = malloc(16);
-		ret = memcpy(ret, ptr, size);
-		free(ptr);
-		return (ret);
-	}
 	else
-		ptr = check_area(ptr, size);
+		return (check_area(ptr, size));
 	return (ptr);
 }

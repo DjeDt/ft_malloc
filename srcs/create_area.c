@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/21 16:49:41 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/03/21 19:14:58 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/04/09 18:33:55 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,9 @@ t_area	*create_large_area(size_t size)
 	}
 	new->size_used = size;
 	new->size_max = size;
-	new->map = new + AREA_SIZE;
 	new->chunk = NULL;
 	new->next = NULL;
-	return (new);
+	return (new + AREA_SIZE);
 }
 
 t_area	*create_new_area(size_t size, t_area *prev)
@@ -44,9 +43,12 @@ t_area	*create_new_area(size_t size, t_area *prev)
 	}
 	new->size_used = 0;
 	new->size_max = total;
-	new->map = new + AREA_SIZE;
 	new->chunk = NULL;
 	new->next = NULL;
-	prev->next = new;
-	return (prev);
+	if (prev != NULL)
+	{
+		prev->next = new;
+		return (prev->next + AREA_SIZE);
+	}
+	return (new + AREA_SIZE);
 }
