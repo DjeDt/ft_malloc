@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/21 16:49:41 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/04/09 18:33:55 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/04/10 17:42:07 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ t_area	*create_large_area(size_t size)
 	new->size_max = size;
 	new->chunk = NULL;
 	new->next = NULL;
-	return (new + AREA_SIZE);
+	return (new);
 }
 
 t_area	*create_new_area(size_t size, t_area *prev)
@@ -41,14 +41,11 @@ t_area	*create_new_area(size_t size, t_area *prev)
 		ft_putendl_fd("allocation error. not enought space left.", 2);
 		return (NULL);
 	}
-	new->size_used = 0;
-	new->size_max = total;
+	new->size_used = AREA_SIZE;
+	new->size_max = total + AREA_SIZE;
 	new->chunk = NULL;
 	new->next = NULL;
 	if (prev != NULL)
-	{
 		prev->next = new;
-		return (prev->next + AREA_SIZE);
-	}
-	return (new + AREA_SIZE);
+	return (new);
 }

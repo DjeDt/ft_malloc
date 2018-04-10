@@ -6,47 +6,29 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/16 16:56:42 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/04/09 19:49:27 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/04/10 16:51:04 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
 
-/*
-**	check if chunk can extend to size
-**	if not, free() and malloc()
-*/
-
-static int		enough_space(t_chunk *chunk, size_t size)
-{
-	if (chunk->next != NULL)
-	{
-		if ((chunk + HEADER_SIZE + size) < (chunk->next + HEADER_SIZE))
-			return (SUCCESS);
-	}
-	return (NOPE);
-}
-
-static void		*search_in_this_one(t_chunk *chunk, void *ptr, size_t size)
+static void		*search_in_this_one(t_chunk *chunk, void *ptr, size_t size, size_t aligned)
 {
 	void	*ret;
 	t_chunk	*save;
 
+	ret = NULL;
 	save = chunk;
 	while (save != NULL)
 	{
 		if (save + HEADER_SIZE == ptr)
 		{
-			ft_putendl("test 3");
-			if (enough_space(save, size) == SUCCESS)
-			{
-				save->size = size;
-				return (save + HEADER_SIZE);
-			}
+			if (aligned < save->size)
+				return (ptr);
 			else
 			{
-				ret = malloc(size);
-//				ret = ft_memcpy(ret, ptr, size); /* ft_memcpy cause sagfulat */
+				ret = malloc(size); /* size is align in malloc */
+				ft_memcpy(ret, ptr, save->size);
 				free(ptr);
 				return (ret);
 			}
@@ -56,7 +38,7 @@ static void		*search_in_this_one(t_chunk *chunk, void *ptr, size_t size)
 	return (NULL);
 }
 
-static void		*search_for_chunk(t_area *area, void *ptr, size_t size)
+static void		*search_for_chunk(t_area *area, void *ptr, size_t size, size_t aligned)
 {
 	void	*ret;
 	t_area	*save;
@@ -64,7 +46,7 @@ static void		*search_for_chunk(t_area *area, void *ptr, size_t size)
 	save = area;
 	while (save != NULL)
 	{
-		if ((ret = search_in_this_one(save->chunk, ptr, size)) != NULL)
+		if ((ret = search_in_this_one(save->chunk, ptr, size, aligned)) != NULL)
 			return (ret);
 		save = save->next;
 	}
@@ -73,20 +55,22 @@ static void		*search_for_chunk(t_area *area, void *ptr, size_t size)
 
 static void		*check_area(void *ptr, size_t size)
 {
+	size_t	aligned;
 	void	*ret;
 
 	ret = NULL;
-	if ((ret = search_for_chunk(g_page.small, ptr, size)) != NULL)
+	aligned = ALIGN(size);
+	if ((ret = search_for_chunk(g_page.small, ptr, size, aligned)) != NULL)
 		return (ret);
-	else if ((ret = search_for_chunk(g_page.medium, ptr, size)) != NULL)
+	else if ((ret = search_for_chunk(g_page.medium, ptr, size, aligned)) != NULL)
 		return (ret);
 	else
 	{
 		/*
-		** if can't realloc in smaller area, then have to malloc()
+		** if can't realloc in smaller area or ptr can't be found, then have to malloc()
 		** large chunk can't be reallocated since they have to be munmap() */
 		ret = malloc(size);
-//		ft_memcpy(ret, ptr, size); /* problem here, create segfault everytime*/
+		ft_memcpy(ret, ptr, size); /* problem here, create segfault everytime*/
 		free(ptr);
 		return (ret);
 	}
@@ -96,16 +80,16 @@ void	*realloc(void *ptr, size_t size)
 {
 	if (DEBUG == 1)
 	{
-		ft_putstr("[realloc] : ");
+		ft_putstr("[REALLOC : ");
 		ft_putnbr(hmt++);
+		ft_putstr("] addr = ");
+		ft_putaddr(ptr);
 		ft_putstr(" | size = ");
 		ft_putnbr(size);
 		ft_putchar('\n');
 	}
 
 	if (ptr == NULL)
-		ptr = malloc(size);
-	else
-		return (check_area(ptr, size));
-	return (ptr);
+		return (malloc(size));
+	return (check_area(ptr, size));
 }

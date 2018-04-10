@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:41:23 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/04/09 19:08:32 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/04/10 13:53:28 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ typedef struct		s_chunk
 	size_t			size;			/* size of current data chunk */
 //	size_t			safe;			/* to check if data does not differ */
 	struct s_chunk	*next;
-	struct s_chunk	*prev;
 }					t_chunk;
 
 typedef struct		s_area
@@ -42,11 +41,10 @@ typedef	struct		s_pages
 	t_area			*small;
 	t_area			*medium;
 	t_area			*large;
-
 }					t_pages;
 
 # define		ALIGN_MOD(x) ((x % 16) || !x) ? (x + 16) - (x % 16) : x
-# define		ALIGN(x) ALIGN_MOD((x + HEADER_SIZE))
+# define		ALIGN(x) ALIGN_MOD((x))
 
 # define		SUCCESS	1
 # define		NOPE	0
@@ -61,7 +59,7 @@ typedef	struct		s_pages
 # define		AREA_SIZE	sizeof(t_area)
 # define		HEADER_SIZE	sizeof(t_chunk)
 
-#define DEBUG 0
+#define DEBUG 1
 static size_t hmt;
 
 t_pages				g_page;
@@ -76,8 +74,14 @@ void	*push_chunk_to_area(size_t size);
 t_area	*create_new_area(size_t size, t_area *prev);
 t_area	*create_large_area(size_t size);
 
+
+/*
 t_area	*search_small_area(size_t size);
 t_area	*search_medium_area(size_t size);
+*/
+t_area	*search_small_area(size_t size, t_area **area);
+t_area	*search_medium_area(size_t size, t_area **area);
+
 void	*search_free_chunk(t_area *area, size_t size);
 
 /*

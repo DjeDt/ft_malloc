@@ -6,20 +6,20 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/28 20:30:59 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/04/09 18:30:19 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/04/10 17:41:47 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
 
-static int	search_large(t_area *area, void *ptr)
+static int	search_large(t_area **area, void *ptr)
 {
 	t_area	*save;
 	t_area	*prev;
 	int ret; /* debug value */
 
 	prev = NULL;
-	save = area;
+	save = (*area);
 	while (save != NULL)
 	{
 		if (save + AREA_SIZE == ptr)
@@ -27,16 +27,9 @@ static int	search_large(t_area *area, void *ptr)
 			if (prev != NULL)
 				prev->next = save->next;
 			else
-				area = save->next;
+				(*area) = save->next;
 			ret = munmap(save, save->size_max + AREA_SIZE);
-			if (DEBUG == 1)
-			{
-				ft_putstr("[free] munmap ret value = ");
-				ft_putnbr(ret);
-				ft_putchar('\n');
-			}
-
-			return (SUCCESS);
+			return (ret == 0 ? SUCCESS : NOPE); /* debug tern*/
 		}
 		prev = save;
 		save = save->next;
@@ -80,23 +73,24 @@ void	free(void *ptr)
 	if (ptr == NULL)
 		return ;
 
-	int ret = 0; /* debug */
+	int ret = 0;  /* debug */
 	if (DEBUG == 1)
 	{
-		ft_putstr("[free] : ");
+		ft_putstr("[free : ");
 		ft_putnbr(hmt++);
-		ft_putchar('\n');
+		ft_putstr(" & addr = ");
+		ft_putaddr(ptr);
 	}
 
 	if ((ret = search_smaller(g_page.small, ptr)) != SUCCESS)
 		if ((ret = search_smaller(g_page.medium, ptr)) != SUCCESS)
-			ret = search_large(g_page.large, ptr);
+			ret = search_large(&g_page.large, ptr);
 
 	if (DEBUG == 1)
 	{
 		if (ret == SUCCESS)
-			ft_putendl("success");
+			ft_putendl("] -> ret = SUCCESS");
 		else
-			ft_putendl("nope");
+			ft_putendl("] -> ret = NOPE");
 	}
 }
