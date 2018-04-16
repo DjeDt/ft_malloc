@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/21 14:42:26 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/04/10 18:02:11 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/04/16 16:40:16 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	*push_chunk(t_area *area, size_t size)
 			tmp = tmp->next;
 		tmp->next = new;
 	}
-	return (new + HEADER_SIZE);
+	return ((unsigned char*)new + HEADER_SIZE);
 }
 
 void	*push_large(t_area **area, size_t size)
@@ -48,7 +48,15 @@ void	*push_large(t_area **area, size_t size)
 	if ((*area) == NULL)
 	{
 		(*area) = create_large_area(size);
-		return ((*area) + AREA_SIZE);
+
+		if (DEBUG == 1)
+		{
+			ft_putstr("[push large 1 ] : ");
+			ft_putaddr((*area) + AREA_SIZE);
+			ft_putchar('\n');
+		}
+
+		return ((unsigned char*)*area + AREA_SIZE);
 	}
 	else
 	{
@@ -57,7 +65,14 @@ void	*push_large(t_area **area, size_t size)
 			tmp = tmp->next;
 		tmp->next = create_large_area(size);
 	}
-	return (tmp->next + AREA_SIZE);
+
+	if (DEBUG == 1)
+	{
+		ft_putstr("[push large 2 ] : ");
+		ft_putaddr(tmp);
+		ft_putchar('\n');
+	}
+	return ((unsigned char*)tmp->next + AREA_SIZE);
 }
 
 void	*push_chunk_to_area(size_t size)

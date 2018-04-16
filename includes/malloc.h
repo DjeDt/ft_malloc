@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:41:23 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/04/10 13:53:28 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/04/16 17:05:01 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ typedef struct		s_chunk
 {
 	int				statut;			/* is available ? */
 	size_t			size;			/* size of current data chunk */
-//	size_t			safe;			/* to check if data does not differ */
 	struct s_chunk	*next;
 }					t_chunk;
 
@@ -59,6 +58,8 @@ typedef	struct		s_pages
 # define		AREA_SIZE	sizeof(t_area)
 # define		HEADER_SIZE	sizeof(t_chunk)
 
+
+/* Debug values */
 #define DEBUG 1
 static size_t hmt;
 

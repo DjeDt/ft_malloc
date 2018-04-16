@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:39:27 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/04/10 18:03:33 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/04/16 16:40:59 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,7 @@ void	print_area(void)
 		chunk = area->chunk;
 		while (chunk != NULL)
 		{
-			if (chunk->statut == USED)
-				count2++;
+			count2++;
 			chunk = chunk->next;
 		}
 		area = area->next;
@@ -47,8 +46,7 @@ void	print_area(void)
 		chunk = area->chunk;
 		while (chunk != NULL)
 		{
-			if (chunk->statut == USED)
-				count2++;
+			count2++;
 			chunk = chunk->next;
 		}
 		area = area->next;
@@ -93,7 +91,11 @@ void	*malloc(size_t size)
 		ft_putstr(" addr = ");
 		ft_putaddr(ret);
 		ft_putstr(" ]\n");
+		ft_putstr("next addr should be ");
+		ft_putaddr(ret + size);
+		ft_putchar('\n');
 	}
-	print_area();
+	if (DEBUG == 1)
+		print_area();
 	return (ret);
 }

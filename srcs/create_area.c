@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/21 16:49:41 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/04/10 17:42:07 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/04/16 16:43:44 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@ t_area	*create_large_area(size_t size)
 		ft_putendl_fd("allocation error. not enought space left.", 2);
 		return (NULL);
 	}
-	new->size_used = size;
-	new->size_max = size;
+	new->size_used = size + AREA_SIZE;
+	new->size_max = size + AREA_SIZE;
 	new->chunk = NULL;
 	new->next = NULL;
 	return (new);

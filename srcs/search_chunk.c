@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/21 16:24:48 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/04/10 17:53:49 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/04/16 17:05:59 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	*search_free_chunk(t_area *area, size_t size)
 			if ((tmp->size >= size) && (tmp->statut == FREE))
 			{
 				tmp->statut = USED;
-				return (tmp + HEADER_SIZE);
+				return ((unsigned char*)tmp + HEADER_SIZE);
 			}
 			tmp = tmp->next;
 		}
@@ -52,13 +52,14 @@ t_area	*search_small_area(size_t size, t_area **area)
 		{
 			if ((tmp->size_used + size) < tmp->size_max)
 				return (tmp);
-			if (tmp->next == NULL)
-				break ;
 			prev = tmp;
 			tmp = tmp->next;
 		}
 		if (tmp == NULL)
+		{
 			tmp = create_new_area(TINY_SIZE, prev);
+			prev->next = tmp;
+		}
 		return (tmp);
 	}
 	return (NULL);
@@ -81,13 +82,14 @@ t_area	*search_medium_area(size_t size, t_area **area)
 		{
 			if ((tmp->size_used + size) < tmp->size_max)
 				return (tmp);
-			if (tmp->next == NULL)
-				break ;
 			prev = tmp;
 			tmp = tmp->next;
 		}
 		if (tmp == NULL)
-			prev->next = create_new_area(MEDIUM_SIZE, prev);
+		{
+			tmp = create_new_area(MEDIUM_SIZE, prev);
+			prev->next = tmp;
+		}
 		return (tmp);
 	}
 	return (NULL);
