@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:41:23 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/04/16 17:05:01 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/04/17 12:49:42 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,16 +52,12 @@ typedef	struct		s_pages
 # define		FREE	1
 # define		USED	0
 
-# define		TINY_SIZE	128
-# define		MEDIUM_SIZE	512
+# define		TINY_SIZE	512
+# define		MEDIUM_SIZE	1024
 
 # define		AREA_SIZE	sizeof(t_area)
 # define		HEADER_SIZE	sizeof(t_chunk)
 
-
-/* Debug values */
-#define DEBUG 1
-static size_t hmt;
 
 t_pages				g_page;
 pthread_mutex_t		g_thread;
@@ -76,13 +72,8 @@ t_area	*create_new_area(size_t size, t_area *prev);
 t_area	*create_large_area(size_t size);
 
 
-/*
-t_area	*search_small_area(size_t size);
-t_area	*search_medium_area(size_t size);
-*/
 t_area	*search_small_area(size_t size, t_area **area);
 t_area	*search_medium_area(size_t size, t_area **area);
-
 void	*search_free_chunk(t_area *area, size_t size);
 
 /*
@@ -94,12 +85,5 @@ void	free(void *ptr);
 **	realloc func
 */
 void	*realloc(void *ptr, size_t size);
-
-/* need to sup */
-
-void	count_zone(t_area **area);
-void	print_all(t_chunk **chunk);
-void	ft_putaddr(void *ptr);
-void	print_large(void);
 
 #endif

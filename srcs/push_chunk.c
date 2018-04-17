@@ -6,20 +6,20 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/21 14:42:26 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/04/16 16:40:16 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/04/17 12:44:03 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
 
-void	init_chunk(t_chunk **chunk, size_t size)
+static void	init_chunk(t_chunk **chunk, size_t size)
 {
 	(*chunk)->size = size;
 	(*chunk)->statut = USED;
 	(*chunk)->next = NULL;
 }
 
-void	*push_chunk(t_area *area, size_t size)
+static void	*push_chunk(t_area *area, size_t size)
 {
 	t_chunk	*tmp;
 	t_chunk *new;
@@ -41,21 +41,13 @@ void	*push_chunk(t_area *area, size_t size)
 	return ((unsigned char*)new + HEADER_SIZE);
 }
 
-void	*push_large(t_area **area, size_t size)
+static void	*push_large(t_area **area, size_t size)
 {
 	t_area	*tmp;
 
 	if ((*area) == NULL)
 	{
 		(*area) = create_large_area(size);
-
-		if (DEBUG == 1)
-		{
-			ft_putstr("[push large 1 ] : ");
-			ft_putaddr((*area) + AREA_SIZE);
-			ft_putchar('\n');
-		}
-
 		return ((unsigned char*)*area + AREA_SIZE);
 	}
 	else
@@ -64,13 +56,6 @@ void	*push_large(t_area **area, size_t size)
 		while (tmp->next != NULL)
 			tmp = tmp->next;
 		tmp->next = create_large_area(size);
-	}
-
-	if (DEBUG == 1)
-	{
-		ft_putstr("[push large 2 ] : ");
-		ft_putaddr(tmp);
-		ft_putchar('\n');
 	}
 	return ((unsigned char*)tmp->next + AREA_SIZE);
 }

@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/16 16:56:42 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/04/10 16:51:04 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/04/17 12:35:22 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,13 @@ static void		*search_in_this_one(t_chunk *chunk, void *ptr, size_t size, size_t 
 		if (save + HEADER_SIZE == ptr)
 		{
 			if (aligned < save->size)
+			{
+				save->size = aligned;
 				return (ptr);
+			}
 			else
 			{
-				ret = malloc(size); /* size is align in malloc */
+				ret = malloc(size);
 				ft_memcpy(ret, ptr, save->size);
 				free(ptr);
 				return (ret);
@@ -70,7 +73,7 @@ static void		*check_area(void *ptr, size_t size)
 		** if can't realloc in smaller area or ptr can't be found, then have to malloc()
 		** large chunk can't be reallocated since they have to be munmap() */
 		ret = malloc(size);
-		ft_memcpy(ret, ptr, size); /* problem here, create segfault everytime*/
+		ft_memcpy(ret, ptr, size);
 		free(ptr);
 		return (ret);
 	}
@@ -78,17 +81,6 @@ static void		*check_area(void *ptr, size_t size)
 
 void	*realloc(void *ptr, size_t size)
 {
-	if (DEBUG == 1)
-	{
-		ft_putstr("[REALLOC : ");
-		ft_putnbr(hmt++);
-		ft_putstr("] addr = ");
-		ft_putaddr(ptr);
-		ft_putstr(" | size = ");
-		ft_putnbr(size);
-		ft_putchar('\n');
-	}
-
 	if (ptr == NULL)
 		return (malloc(size));
 	return (check_area(ptr, size));

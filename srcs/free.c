@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/28 20:30:59 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/04/16 16:45:18 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/04/17 12:49:08 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ static int	search_large(t_area **area, void *ptr)
 {
 	t_area	*save;
 	t_area	*prev;
-	int ret; /* debug value */
+	int		ret;
 
 	prev = NULL;
 	save = (*area);
@@ -29,7 +29,7 @@ static int	search_large(t_area **area, void *ptr)
 			else
 				(*area) = save->next;
 			ret = munmap(save, save->size_max);
-			return (ret == 0 ? SUCCESS : NOPE); /* debug tern */
+			return (ret == 0 ? SUCCESS : ERROR);
 		}
 		prev = save;
 		save = save->next;
@@ -70,28 +70,18 @@ static int	search_smaller(t_area *area, void *ptr)
 
 void	free(void *ptr)
 {
+	int		ret;
+
 	if (ptr == NULL)
 		return ;
 
-	int ret = 0;  /* debug */
-	if (DEBUG == 1)
-	{
-		ft_putstr("[free : ");
-		ft_putnbr(hmt++);
-		ft_putstr(" & addr = ");
-		ft_putaddr(ptr);
-	}
-
-
+	ret = 0;
 	if ((ret = search_smaller(g_page.small, ptr)) != SUCCESS)
-		if ((ret = search_smaller(g_page.medium, ptr)) != SUCCESS)
-			ret = search_large(&g_page.large, ptr);
-
-	if (DEBUG == 1)
 	{
-		if (ret == SUCCESS)
-			ft_putendl("] -> ret = SUCCESS");
-		else
-			ft_putendl("] -> ret = NOPE");
+		if ((ret = search_smaller(g_page.medium, ptr)) != SUCCESS)
+		{
+			if ((ret = search_large(&g_page.large, ptr)) == ERROR)
+				ft_putendl_fd("error when unmap memory", 2);
+		}
 	}
 }
