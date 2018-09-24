@@ -6,7 +6,7 @@
 #    By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/02/26 16:31:33 by ddinaut           #+#    #+#              #
-#    Updated: 2018/04/16 13:10:31 by ddinaut          ###   ########.fr        #
+#    Updated: 2018/09/24 15:51:04 by ddinaut          ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -53,7 +53,8 @@ SRCS = \
 \
 	free.c			\
 \
-	utils.c
+	utils.c \
+	show_alloc_mem.c
 
 OBJ_FILES = $(SRC_FILES:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 SRC_FILES = $(addprefix $(SRC_DIR)/,$(SRCS))
@@ -67,7 +68,7 @@ all: $(NAME)
 
 $(OBJ_DIR)/%.o : $(SRC_DIR)/%.c
 	mkdir -p $(dir $@)
-	$(CC) $(FLAGS) -o $@ -c $< -I$(INC_DIR) 
+	$(CC) $(FLAGS) -o $@ -c $< -I$(INC_DIR)
 
 $(NAME): libft ft_printf $(OBJ_FILES)
 	$(CC) $(FLAG) $(DEB) -shared -o $(NAME) $(OBJ_FILES) -I$(INC_DIR) $(LIBFT) $(LIBPRINTF)

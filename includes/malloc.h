@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:41:23 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/04/17 14:28:42 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/09/24 17:33:09 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,10 +71,9 @@ void	*push_chunk_to_area(size_t size);
 t_area	*create_new_area(size_t size, t_area *prev);
 t_area	*create_large_area(size_t size);
 
-
+void	*search_free_chunk(t_area *area, size_t size);
 t_area	*search_small_area(size_t size, t_area **area);
 t_area	*search_medium_area(size_t size, t_area **area);
-void	*search_free_chunk(t_area *area, size_t size);
 
 /*
 **	free func
@@ -86,4 +85,11 @@ void	free(void *ptr);
 */
 void	*realloc(void *ptr, size_t size);
 
+
+/*
+**  utils
+*/
+void	show_alloc_mem(void);
+void	ft_puthex(unsigned long l);
+void	ft_putaddr(void *ptr);
 #endif

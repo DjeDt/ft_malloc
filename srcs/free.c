@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/28 20:30:59 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/04/17 12:49:08 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/04/20 10:57:33 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ void	free(void *ptr)
 		if ((ret = search_smaller(g_page.medium, ptr)) != SUCCESS)
 		{
 			if ((ret = search_large(&g_page.large, ptr)) == ERROR)
-				ft_putendl_fd("error when unmap memory", 2);
+				ft_putendl_fd("error when unmap memory", STDERR_FILENO);
 		}
 	}
 }

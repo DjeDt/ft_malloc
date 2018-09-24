@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/21 16:24:48 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/04/17 14:22:25 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/04/20 11:54:49 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,9 @@ void	*search_free_chunk(t_area *area, size_t size)
 		{
 			if ((tmp->size >= size) && (tmp->statut == FREE))
 			{
+//				pthread_mutex_lock(&g_thread);
 				tmp->statut = USED;
+//				pthread_mutex_unlock(&g_thread);
 				return ((unsigned char*)tmp + HEADER_SIZE);
 			}
 			tmp = tmp->next;
@@ -86,7 +88,7 @@ t_area	*search_medium_area(size_t size, t_area **area)
 			tmp = tmp->next;
 		}
 		if (tmp == NULL)
-		{
+ 		{
 			tmp = create_new_area(MEDIUM_SIZE, prev);
 			prev->next = tmp;
 		}
@@ -94,4 +96,3 @@ t_area	*search_medium_area(size_t size, t_area **area)
 	}
 	return (NULL);
 }
-

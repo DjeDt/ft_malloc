@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/16 16:56:42 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/04/17 12:35:22 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/04/20 12:07:22 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,11 @@ static void		*search_in_this_one(t_chunk *chunk, void *ptr, size_t size, size_t 
 			}
 			else
 			{
+//				pthread_mutex_lock(&g_thread);
 				ret = malloc(size);
 				ft_memcpy(ret, ptr, save->size);
 				free(ptr);
+//				pthread_mutex_unlock(&g_thread);
 				return (ret);
 			}
 		}
@@ -72,9 +74,11 @@ static void		*check_area(void *ptr, size_t size)
 		/*
 		** if can't realloc in smaller area or ptr can't be found, then have to malloc()
 		** large chunk can't be reallocated since they have to be munmap() */
+//		pthread_mutex_lock(&g_thread);
 		ret = malloc(size);
 		ft_memcpy(ret, ptr, size);
 		free(ptr);
+//		pthread_mutex_unlock(&g_thread);
 		return (ret);
 	}
 }
