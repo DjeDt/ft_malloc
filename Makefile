@@ -1,3 +1,4 @@
+
 #******************************************************************************#
 #                                                                              #
 #                                                         :::      ::::::::    #
@@ -6,7 +7,7 @@
 #    By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/02/26 16:31:33 by ddinaut           #+#    #+#              #
-#    Updated: 2018/09/24 15:51:04 by ddinaut          ###   ########.fr        #
+#    Updated: 2018/09/25 17:42:19 by ddinaut          ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -53,7 +54,9 @@ SRCS = \
 \
 	free.c			\
 \
-	utils.c \
+#	calloc.c \
+\
+	utils.c			\
 	show_alloc_mem.c
 
 OBJ_FILES = $(SRC_FILES:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
@@ -83,7 +86,7 @@ ft_printf:
 	@printf "\n[Compiling ft_printf] :\n"
 	make -C ft_printf/
 
-test:
+test: all
 	$(CC) main.c $(NAME) -I$(INC_DIR) $(LIBPRINTF) $(LIBFT)
 
 clean:

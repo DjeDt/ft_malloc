@@ -1,3 +1,4 @@
+
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
@@ -6,7 +7,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:41:23 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/09/24 17:33:09 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/09/25 15:41:09 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +20,7 @@
 
 # include "../libft/includes/libft.h"
 # include "../ft_printf/includes/printf.h"
+# include "debug.h"
 
 typedef struct		s_chunk
 {
@@ -85,6 +87,10 @@ void	free(void *ptr);
 */
 void	*realloc(void *ptr, size_t size);
 
+/*
+** calloc func
+*/
+void	*calloc(size_t count, size_t size);
 
 /*
 **  utils

@@ -1,24 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   malloc.c                                           :+:      :+:    :+:   */
+/*   debug.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/02/26 16:39:27 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/09/25 17:42:35 by ddinaut          ###   ########.fr       */
+/*   Created: 2018/09/25 13:21:38 by ddinaut           #+#    #+#             */
+/*   Updated: 2018/09/25 17:19:12 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "malloc.h"
+#ifndef		DEBUG_H
+# define	DEBUG_H
 
-void	*malloc(size_t size)
-{
-	void	*ret;
+# define ENABLE		1
+# define DISABLE	0
 
-	size = ALIGN(size + (size > MEDIUM_SIZE ? AREA_SIZE : HEADER_SIZE));
-	ret = push_chunk_to_area(size);
-	if (ENABLE_DEBUG == ENABLE)
-		show_alloc_mem();
-	return (ret);
-}
+# define ENABLE_DEBUG DISABLE
+
+#endif

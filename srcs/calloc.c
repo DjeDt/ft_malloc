@@ -1,24 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   malloc.c                                           :+:      :+:    :+:   */
+/*   calloc.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/02/26 16:39:27 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/09/25 17:42:35 by ddinaut          ###   ########.fr       */
+/*   Created: 2018/09/25 15:31:48 by ddinaut           #+#    #+#             */
+/*   Updated: 2018/09/25 17:42:38 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
 
-void	*malloc(size_t size)
+void	*calloc(size_t count, size_t size)
 {
-	void	*ret;
+	void	*new;
 
-	size = ALIGN(size + (size > MEDIUM_SIZE ? AREA_SIZE : HEADER_SIZE));
-	ret = push_chunk_to_area(size);
-	if (ENABLE_DEBUG == ENABLE)
-		show_alloc_mem();
-	return (ret);
+	new = malloc(count * size);
+	new = ft_memset(new, '\0', count * size);
+	return (new);
 }

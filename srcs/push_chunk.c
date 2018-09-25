@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   add_to2.c                                          :+:      :+:    :+:   */
+/*   push_chunk.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/21 14:42:26 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/04/20 11:56:32 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/09/25 16:40:41 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,11 @@ static void	*push_large(t_area **area, size_t size)
 {
 	t_area	*tmp;
 
-//	pthread_mutex_lock(&g_thread);
+	pthread_mutex_lock(&g_thread);
 	if ((*area) == NULL)
 	{
 		(*area) = create_large_area(size);
-//		pthread_mutex_unlock(&g_thread);
+		pthread_mutex_unlock(&g_thread);
 		return ((unsigned char*)*area + AREA_SIZE);
 	}
 	else
@@ -59,7 +59,7 @@ static void	*push_large(t_area **area, size_t size)
 			tmp = tmp->next;
 		tmp->next = create_large_area(size);
 	}
-//	pthread_mutex_unlock(&g_thread);
+	pthread_mutex_unlock(&g_thread);
 	return ((unsigned char*)tmp->next + AREA_SIZE);
 }
 
@@ -74,21 +74,21 @@ void	*push_chunk_to_area(size_t size)
 	{
 		if ((ret = search_free_chunk(g_page.small, size)) != NULL)
 			return (ret);
-//		pthread_mutex_lock(&g_thread);
+		pthread_mutex_lock(&g_thread);
 		if ((area = search_small_area(size, &g_page.small)) == NULL)
 			return (NULL);
 		ret = push_chunk(area, size);
-//		pthread_mutex_unlock(&g_thread);
+		pthread_mutex_unlock(&g_thread);
 	}
 	else if (size <= MEDIUM_SIZE)
 	{
 		if ((ret = search_free_chunk(g_page.medium, size)) != NULL)
 			return (ret);
-//		pthread_mutex_lock(&g_thread);
+		pthread_mutex_lock(&g_thread);
 		if ((area = search_medium_area(size, &g_page.medium)) == NULL)
 			return (NULL);
 		ret = push_chunk(area, size);
-//		pthread_mutex_unlock(&g_thread);
+		pthread_mutex_unlock(&g_thread);
 	}
 	else
 		ret = push_large(&g_page.large, size);

@@ -6,34 +6,64 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/24 15:47:38 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/09/24 17:36:57 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/09/25 12:48:44 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
 
+void	print_info(void *addr, void *next, size_t size)
+{
+	if (addr)
+		ft_putaddr(addr);
+	ft_putstr(" - ");
+	if (next)
+		ft_putaddr(next);
+	ft_putstr(" : ");
+	ft_putnbr(size);
+	ft_putendl(" octets");
+}
+
 void	print_larger(t_area *tmp)
 {
-	ft_printf("LARGE: \n");
-	(void)tmp;
+	t_area	*tmp_lrg;
+
+	ft_putstr("LARGE: ");
+	if (tmp == NULL)
+	{
+		ft_putendl("Empty large area");
+		return ;
+	}
+	tmp_lrg = tmp;
+	ft_putaddr(tmp_lrg);
+	ft_putchar('\n');
+	while (tmp_lrg != NULL)
+	{
+		print_info(tmp_lrg, tmp_lrg + tmp_lrg->size_used, tmp_lrg->size_used);
+		tmp_lrg = tmp_lrg->next;
+	}
 }
 
 void	print_medium(t_area *tmp)
 {
-	t_area *tmp_area;
-	t_chunk *tmp_chunk;
+	t_area	*tmp_area;
+	t_chunk	*tmp_chunk;
 
 	tmp_area = tmp;
-	ft_printf("MEDIUM: \n");
+	ft_putstr("MEDIUM: ");
 	if (tmp_area == NULL)
-		ft_printf("empty medium area\n");
+	{
+		ft_putendl("Empty medium area");
 		return ;
+	}
+	ft_putaddr(tmp_area);
+	ft_putchar('\n');
 	while (tmp_area != NULL)
 	{
 		tmp_chunk = tmp_area->chunk;
-		while (tmp_chunk->next != NULL)
+		while (tmp_chunk != NULL)
 		{
-			ft_printf("%p - %p : %lld octets", tmp_chunk, tmp_chunk + tmp_chunk->size, tmp_chunk->size );
+			print_info(tmp_chunk, tmp_chunk + tmp_chunk->size, tmp_chunk->size);
 			tmp_chunk = tmp_chunk->next;
 		}
 		tmp_area = tmp_area->next;
@@ -42,35 +72,29 @@ void	print_medium(t_area *tmp)
 
 void	print_tiny(t_area *tmp)
 {
-	t_area *tmp_area;
-	t_chunk *tmp_chunk;
+	t_area	*tmp_area;
+	t_chunk	*tmp_chunk;
 
 	tmp_area = tmp;
 	ft_putstr("TINY: ");
-	ft_putaddr(tmp_area);
-	ft_putchar('\n');
 	if (tmp_area == NULL)
 	{
-		ft_printf("empty tiny area\n");
+		ft_putendl("Empty tiny area\n");
 		return ;
 	}
+	ft_putaddr(tmp_area);
+	ft_putchar('\n');
 	while (tmp_area != NULL)
 	{
 		tmp_chunk = tmp_area->chunk;
 		while (tmp_chunk != NULL)
 		{
-			ft_putaddr(tmp_chunk);
-			ft_putstr(" - ");
-			ft_putaddr(tmp_chunk + tmp->chunk->size);
-			ft_putstr(" ");
-			ft_putnbr(tmp_chunk->size);
-			ft_putendl(" octets");
+			print_info(tmp_chunk, tmp_chunk + tmp_chunk->size, tmp_chunk->size);
 			tmp_chunk = tmp_chunk->next;
 		}
 		tmp_area = tmp_area->next;
 	}
 }
-
 
 void	show_alloc_mem(void)
 {
@@ -78,7 +102,7 @@ void	show_alloc_mem(void)
 
 	tmp_page = g_page;
 	print_tiny(tmp_page.small);
-//	print_medium(tmp_page.medium);
-//	print_larger(tmp_page.large);
+	print_medium(tmp_page.medium);
+	print_larger(tmp_page.large);
 	return ;
 }
