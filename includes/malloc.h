@@ -1,4 +1,3 @@
-
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
@@ -7,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:41:23 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/09/25 15:41:09 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/09/26 17:23:51 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +67,9 @@ pthread_mutex_t		g_thread;
 **	malloc func
 */
 void	*malloc(size_t size);
+void	*manage_small_or_medium(size_t size);
+void	*manage_large(t_area **area, size_t size);
 
-void	*push_chunk_to_area(size_t size);
 t_area	*create_new_area(size_t size, t_area *prev);
 t_area	*create_large_area(size_t size);
 
