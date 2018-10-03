@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/28 20:30:59 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/03 16:59:38 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/03 19:00:48 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,16 @@ static int	search_large(t_area **area, void *ptr)
 	save = (*area);
 	while (save != NULL)
 	{
-		if (save + AREA_SIZE == ptr)
+		if ((char*)save + AREA_SIZE == ptr)
 		{
 			if (prev != NULL)
+			{
 				prev->next = save->next;
+			}
 			else
-				(*area) = save->next;
+			{
+					(*area) = save->next;
+			}
 			ret = munmap(save, save->size_max);
 			return (ret == 0 ? SUCCESS : ERROR);
 		}
@@ -37,15 +41,13 @@ static int	search_large(t_area **area, void *ptr)
 	return (NOPE);
 }
 
-static int	search_for_chunk(t_chunk *list, void *ptr, int *free_area)
+static int	search_for_chunk(t_chunk *list, void *ptr)
 {
 	t_chunk *save;
 
 	save = list;
 	while (save != NULL)
 	{
-		if ((*free_area) == ALLFREE && save->statut == USED)
-			(*free_area) = NOPE;
 		if ((char*)save + HEADER_SIZE == ptr)
 		{
 			save->statut = FREE;
@@ -58,14 +60,12 @@ static int	search_for_chunk(t_chunk *list, void *ptr, int *free_area)
 
 static int	search_smaller(t_area *area, void *ptr)
 {
-	int free_area;
 	t_area *save;
 
 	save = area;
 	while (save != NULL)
 	{
-		free_area = ALLFREE;
-		if (search_for_chunk(save->chunk, ptr, &free_area) == SUCCESS)
+		if (search_for_chunk(save->chunk, ptr) == SUCCESS)
 			return (SUCCESS);
 		save = save->next;
 	}
@@ -78,11 +78,7 @@ void	free(void *ptr)
 
 	if (ptr == NULL)
 		return ;
-
 	ret = 0;
-	/* ft_putstr("free : ptr = "); */
-	/* ft_putaddr(ptr); */
-	/* ft_putchar('\n'); */
 	if ((ret = search_smaller(g_page.small, ptr)) != SUCCESS)
 	{
 		if ((ret = search_smaller(g_page.medium, ptr)) != SUCCESS)

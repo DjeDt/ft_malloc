@@ -6,7 +6,7 @@
 #    By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/02/26 16:31:33 by ddinaut           #+#    #+#              #
-#    Updated: 2018/10/01 16:52:49 by ddinaut          ###   ########.fr        #
+#    Updated: 2018/10/03 18:40:24 by ddinaut          ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -50,6 +50,7 @@ SRCS = \
 	create_area.c	\
 \
 	realloc.c		\
+	calloc.c		\
 	free.c			\
 \
 	utils.c			\

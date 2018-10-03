@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/24 15:47:38 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/03 11:31:29 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/03 17:48:35 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	print_info(void *addr, void *next, size_t size)
 	{
 		ft_putaddr(addr);
 		ft_putstr(" data : ");
-		ft_putaddr(addr + HEADER_SIZE);
+		ft_putaddr((char*)addr + HEADER_SIZE);
 	}
 	if (next)
 	{
@@ -45,7 +45,7 @@ void	print_larger(t_area *tmp)
 	ft_putchar('\n');
 	while (tmp_lrg != NULL)
 	{
-		print_info(tmp_lrg, tmp_lrg + tmp_lrg->size_used, tmp_lrg->size_used);
+		print_info(tmp_lrg, tmp_lrg->next, tmp_lrg->size_used);
 		tmp_lrg = tmp_lrg->next;
 	}
 }
@@ -69,7 +69,7 @@ void	print_medium(t_area *tmp)
 		tmp_chunk = tmp_area->chunk;
 		while (tmp_chunk != NULL)
 		{
-			print_info(tmp_chunk, tmp_chunk + tmp_chunk->size, tmp_chunk->size);
+			print_info(tmp_chunk, tmp_chunk->next, tmp_chunk->size);
 			tmp_chunk = tmp_chunk->next;
 		}
 		tmp_area = tmp_area->next;
@@ -96,13 +96,12 @@ void	print_tiny(t_area *tmp)
 		tmp_chunk = tmp_area->chunk;
 		while (tmp_chunk != NULL)
 		{
-			ft_putstr("tiny chunk : ");
 			ft_putstr("statut = ");
 			if (tmp_chunk->statut == FREE)
 				ft_putstr("free | ");
 			else
 				ft_putstr("used | ");
-			print_info(tmp_chunk, tmp_chunk + tmp_chunk->size, tmp_chunk->size);
+			print_info(tmp_chunk, tmp_chunk->next, tmp_chunk->size);
 			tmp_chunk = tmp_chunk->next;
 		}
 		tmp_area = tmp_area->next;
@@ -111,11 +110,8 @@ void	print_tiny(t_area *tmp)
 
 void	show_alloc_mem(void)
 {
-	t_pages tmp_page;
-
-	tmp_page = g_page;
-	print_tiny(tmp_page.small);
-	print_medium(tmp_page.medium);
-	print_larger(tmp_page.large);
+	print_tiny(g_page.small);
+	print_medium(g_page.medium);
+	print_larger(g_page.large);
 	return ;
 }
