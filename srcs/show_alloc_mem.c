@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/24 15:47:38 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/09/25 12:48:44 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/01 17:25:23 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,16 @@
 void	print_info(void *addr, void *next, size_t size)
 {
 	if (addr)
+	{
 		ft_putaddr(addr);
-	ft_putstr(" - ");
+		ft_putstr(" data : ");
+		ft_putaddr(addr + HEADER_SIZE);
+	}
 	if (next)
+	{
+		ft_putstr(" -> next-chunk -> ");
 		ft_putaddr(next);
+	}
 	ft_putstr(" : ");
 	ft_putnbr(size);
 	ft_putendl(" octets");
@@ -82,6 +88,7 @@ void	print_tiny(t_area *tmp)
 		ft_putendl("Empty tiny area\n");
 		return ;
 	}
+	ft_putstr("area main addr : ");
 	ft_putaddr(tmp_area);
 	ft_putchar('\n');
 	while (tmp_area != NULL)
@@ -89,6 +96,7 @@ void	print_tiny(t_area *tmp)
 		tmp_chunk = tmp_area->chunk;
 		while (tmp_chunk != NULL)
 		{
+			ft_putstr("tiny chunk : ");
 			print_info(tmp_chunk, tmp_chunk + tmp_chunk->size, tmp_chunk->size);
 			tmp_chunk = tmp_chunk->next;
 		}

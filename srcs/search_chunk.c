@@ -6,13 +6,13 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/21 16:24:48 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/04/20 11:54:49 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/01 17:44:04 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
 
-void	*search_free_chunk(t_area *area, size_t size)
+void	*search_free_chunk(size_t size, t_area *area)
 {
 	t_area	*save;
 	t_chunk	*tmp;
@@ -23,12 +23,12 @@ void	*search_free_chunk(t_area *area, size_t size)
 		tmp = save->chunk;
 		while (tmp != NULL)
 		{
-			if ((tmp->size >= size) && (tmp->statut == FREE))
+			if (tmp->size >= size && tmp->statut == FREE)
 			{
 //				pthread_mutex_lock(&g_thread);
 				tmp->statut = USED;
 //				pthread_mutex_unlock(&g_thread);
-				return ((unsigned char*)tmp + HEADER_SIZE);
+				return (tmp + HEADER_SIZE);
 			}
 			tmp = tmp->next;
 		}
@@ -37,23 +37,23 @@ void	*search_free_chunk(t_area *area, size_t size)
 	return (NULL);
 }
 
-t_area	*search_small_area(size_t size, t_area **area)
+t_area	*search_small_area(size_t size)
 {
 	t_area *tmp;
 	t_area *prev;
 
-	tmp = (*area);
-	if (tmp == NULL)
+	if (g_page.small == NULL)
 	{
-		(*area) = create_new_area(TINY_SIZE, NULL);
-		return (*area);
+	    g_page.small = create_new_area(TINY_SIZE, NULL);
+		return (g_page.small);
 	}
 	else
 	{
+		tmp = g_page.small;
 		while (tmp != NULL)
 		{
 			if ((tmp->size_used + size) < tmp->size_max)
-				return (tmp);
+				break ;
 			prev = tmp;
 			tmp = tmp->next;
 		}
@@ -67,28 +67,28 @@ t_area	*search_small_area(size_t size, t_area **area)
 	return (NULL);
 }
 
-t_area	*search_medium_area(size_t size, t_area **area)
+t_area	*search_medium_area(size_t size)
 {
 	t_area *tmp;
 	t_area *prev;
 
-	tmp = (*area);
-	if (tmp == NULL)
+	if (g_page.medium == NULL)
 	{
-		(*area) = create_new_area(MEDIUM_SIZE, NULL);
-		return (*area);
+		g_page.medium = create_new_area(MEDIUM_SIZE, NULL);
+		return (g_page.medium);
 	}
 	else
 	{
+		tmp = g_page.medium;
 		while (tmp != NULL)
 		{
 			if ((tmp->size_used + size) < tmp->size_max)
-				return (tmp);
+				break ;
 			prev = tmp;
 			tmp = tmp->next;
 		}
 		if (tmp == NULL)
- 		{
+		{
 			tmp = create_new_area(MEDIUM_SIZE, prev);
 			prev->next = tmp;
 		}

@@ -6,7 +6,7 @@
 #    By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/02/26 16:31:33 by ddinaut           #+#    #+#              #
-#    Updated: 2018/09/26 10:45:01 by ddinaut          ###   ########.fr        #
+#    Updated: 2018/10/01 16:52:49 by ddinaut          ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -45,12 +45,11 @@ END_COL		= \033[0;m
 # Sources #
 SRCS = \
 	malloc.c		\
-	push_chunk.c	\
+	manage_chunk.c	\
 	search_chunk.c	\
 	create_area.c	\
 \
 	realloc.c		\
-\
 	free.c			\
 \
 	utils.c			\
