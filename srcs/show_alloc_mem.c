@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/24 15:47:38 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/01 17:25:23 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/03 11:31:29 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,11 @@ void	print_tiny(t_area *tmp)
 		while (tmp_chunk != NULL)
 		{
 			ft_putstr("tiny chunk : ");
+			ft_putstr("statut = ");
+			if (tmp_chunk->statut == FREE)
+				ft_putstr("free | ");
+			else
+				ft_putstr("used | ");
 			print_info(tmp_chunk, tmp_chunk + tmp_chunk->size, tmp_chunk->size);
 			tmp_chunk = tmp_chunk->next;
 		}

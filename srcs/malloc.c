@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:39:27 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/01 18:37:44 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/03 15:58:52 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,15 @@ void	*malloc(size_t size)
 
 	size = align_size(size);
 	if (size <= MEDIUM_SIZE)
-		ret = manage_small_or_medium(size + HEADER_SIZE);
+	{
+//		ft_putendl("<= medium");
+		ret = manage_small_or_medium(size);
+	}
 	else
-		ret = manage_large(size + AREA_SIZE, &g_page.large);
+	{
+//		ft_putendl("large");
+		ret = manage_large(size, &g_page.large);
+	}
 	/* ft_putstr("address returned : "); */
 	/* ft_putaddr(ret); */
 	/* ft_putchar('\n'); */

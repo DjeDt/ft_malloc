@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/21 16:49:41 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/03 10:41:18 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/03 16:56:28 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,17 +26,19 @@ size_t	get_total_allocation(size_t area_size, size_t get_page_size)
 
 t_area	*create_large_area(size_t size)
 {
+	size_t	total;
 	t_area	*new;
 
-	new = mmap(NULL, size + AREA_SIZE, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
+	total = size + AREA_SIZE;
+	new = mmap(NULL, total, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
 	if (new == MAP_FAILED)
 	{
 		ft_putendl_fd("allocation error. not enought space left.", 2);
 		return (NULL);
 	}
-	new->size_used = size;
-	new->size_max = size;
-	new->chunk = (t_chunk*)new + AREA_SIZE;
+	new->size_used = total;
+	new->size_max = total;
+	new->chunk = NULL;
 	new->next = NULL;
 	return (new);
 }
@@ -50,8 +52,8 @@ t_area	*create_new_area(size_t size, t_area *prev)
 
 	page_len = getpagesize();
 	page_num = get_total_allocation(page_len, size);
-	total = page_num * page_len;
-	new = mmap(NULL, total + AREA_SIZE, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
+	total = (page_num * page_len) + AREA_SIZE;
+	new = mmap(NULL, total, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
 	if (new == MAP_FAILED)
 	{
 		ft_putendl_fd("allocation error. not enought space left.", 2);

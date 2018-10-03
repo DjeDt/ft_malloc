@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/28 20:30:59 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/03 10:40:40 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/03 16:59:38 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,17 +37,18 @@ static int	search_large(t_area **area, void *ptr)
 	return (NOPE);
 }
 
-static int	search_for_chunk(t_chunk *list, void *ptr)
+static int	search_for_chunk(t_chunk *list, void *ptr, int *free_area)
 {
 	t_chunk *save;
 
 	save = list;
 	while (save != NULL)
 	{
-		if (save + HEADER_SIZE == ptr)
+		if ((*free_area) == ALLFREE && save->statut == USED)
+			(*free_area) = NOPE;
+		if ((char*)save + HEADER_SIZE == ptr)
 		{
 			save->statut = FREE;
-//			ft_putendl("found chunk");
 			return (SUCCESS);
 		}
 		save = save->next;
@@ -57,18 +58,14 @@ static int	search_for_chunk(t_chunk *list, void *ptr)
 
 static int	search_smaller(t_area *area, void *ptr)
 {
+	int free_area;
 	t_area *save;
 
 	save = area;
 	while (save != NULL)
 	{
-		/* ft_putstr("free : save->chunk = "); */
-		/* ft_putaddr(save->chunk); */
-		/* ft_putchar('\n'); */
-		/* ft_putstr("free : ptr = "); */
-		/* ft_putaddr(ptr); */
-		/* ft_putchar('\n'); */
-		if (search_for_chunk(save->chunk, ptr) == SUCCESS)
+		free_area = ALLFREE;
+		if (search_for_chunk(save->chunk, ptr, &free_area) == SUCCESS)
 			return (SUCCESS);
 		save = save->next;
 	}
