@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/16 16:56:42 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/03 19:00:27 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/04 13:17:48 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,11 +58,30 @@ static void		*search_for_chunk(t_area *area, void *ptr, size_t size, size_t alig
 	return (NULL);
 }
 
+static void		*search_for_large_chunk(t_area *area, void *ptr, size_t size)
+{
+	void	*ret;
+	t_area	*save;
+
+	save = area;
+	while (save != NULL)
+	{
+		if ((char*)save + AREA_SIZE == ptr)
+		{
+			ret = malloc(size);
+			ft_memcpy(ret, ptr, save->size_used);
+			free(ptr);
+			return (ret);
+		}
+		save = save->next;
+	}
+	return (NULL);
+}
+
 static void		*check_area(void *ptr, size_t size)
 {
 	size_t	aligned;
 	void	*ret;
-	t_area	*metadata;
 
 	ret = NULL;
 	aligned = align_size(size);
@@ -70,17 +89,10 @@ static void		*check_area(void *ptr, size_t size)
 		return (ret);
 	else if ((ret = search_for_chunk(g_page.medium, ptr, size, aligned)) != NULL)
 		return (ret);
-	else
-	{
-		metadata = (t_area*)((char*)ptr - AREA_SIZE);
-//		pthread_mutex_lock(&g_thread);
-		ret = malloc(size);
-		ft_memcpy(ret, ptr, metadata->size_max - AREA_SIZE);
-		metadata = NULL;
-		free(ptr);
-//		pthread_mutex_unlock(&g_thread);
+	else if ((ret = search_for_large_chunk(g_page.large, ptr, size)) != NULL)
 		return (ret);
-	}
+	else
+		return (NULL);
 }
 
 void	*realloc(void *ptr, size_t size)
