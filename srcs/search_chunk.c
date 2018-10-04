@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/21 16:24:48 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/03 16:12:16 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/04 19:59:25 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,7 @@ void	*search_free_chunk(size_t size, t_area *area)
 		{
 			if (tmp->size >= size && tmp->statut == FREE)
 			{
-//				pthread_mutex_lock(&g_thread);
 				tmp->statut = USED;
-//				pthread_mutex_unlock(&g_thread);
 				return ((char*)tmp + HEADER_SIZE);
 			}
 			tmp = tmp->next;

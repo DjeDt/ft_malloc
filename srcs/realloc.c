@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/16 16:56:42 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/04 13:17:48 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/04 19:57:27 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,9 @@ static void		*search_in_this_one(t_chunk *chunk, void *ptr, size_t size, size_t 
 			}
 			else
 			{
-//				pthread_mutex_lock(&g_thread);
 				ret = malloc(size);
 				ft_memcpy(ret, ptr, save->size);
 				free(ptr);
-//				pthread_mutex_unlock(&g_thread);
 				return (ret);
 			}
 		}

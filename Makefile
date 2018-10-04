@@ -6,7 +6,7 @@
 #    By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/02/26 16:31:33 by ddinaut           #+#    #+#              #
-#    Updated: 2018/10/03 18:40:24 by ddinaut          ###   ########.fr        #
+#    Updated: 2018/10/04 17:59:49 by ddinaut          ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -43,17 +43,18 @@ CLEAN_LINE	= \033[K
 END_COL		= \033[0;m
 
 # Sources #
-SRCS = \
-	malloc.c		\
-	manage_chunk.c	\
-	search_chunk.c	\
-	create_area.c	\
-\
-	realloc.c		\
-	calloc.c		\
-	free.c			\
-\
-	utils.c			\
+SRCS =					\
+	malloc.c			\
+	manage_chunk.c		\
+	search_chunk.c		\
+	create_area.c		\
+						\
+	realloc.c			\
+	calloc.c			\
+	free.c				\
+						\
+	utils.c				\
+	generate_checksum.c	\
 	show_alloc_mem.c
 
 OBJ_FILES = $(SRC_FILES:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)

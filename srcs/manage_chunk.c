@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/21 14:42:26 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/03 18:54:05 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/04 19:58:35 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,7 @@ void	*manage_large(size_t size, t_area **area)
 
 	if ((*area) == NULL)
 	{
-//		pthread_mutex_lock(&g_thread);
 		(*area) = create_large_area(size);
-//		pthread_mutex_unlock(&g_thread);
 		return ((char*)(*area) + AREA_SIZE);
 	}
 	else
@@ -50,9 +48,7 @@ void	*manage_large(size_t size, t_area **area)
 		tmp = (*area);
 		while (tmp->next != NULL)
 			tmp = tmp->next;
-//	pthread_mutex_lock(&g_thread);
 		tmp->next = create_large_area(size);
-//	pthread_mutex_unlock(&g_thread);
 	}
 	return ((char*)tmp->next + AREA_SIZE);
 }
@@ -64,7 +60,6 @@ void	*manage_small_or_medium(size_t size)
 
 	ret = NULL;
 	area = NULL;
-//		pthread_mutex_lock(&g_thread);
 	if (size <= TINY_SIZE)
 	{
 		if ((ret = search_free_chunk(size, g_page.small)) != NULL)
@@ -81,5 +76,4 @@ void	*manage_small_or_medium(size_t size)
 		return (NULL);
 	ret = push_chunk(size, area);
 	return (ret);
-//		pthread_mutex_unlock(&g_thread);
 }

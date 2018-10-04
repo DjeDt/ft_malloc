@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:41:23 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/03 17:49:25 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/04 18:05:33 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 
 # include "../libft/includes/libft.h"
 # include "../ft_printf/includes/printf.h"
+# include "debug.h"
 
 typedef struct		s_chunk
 {
@@ -40,12 +41,9 @@ typedef	struct		s_pages
 	t_area			*small;
 	t_area			*medium;
 	t_area			*large;
+	unsigned long	cheksum;
 }					t_pages;
 
-//# define		ALIGN_MOD(x) ((x % 16) || !x) ? (x + 16) - (x % 16) : x
-//# define		ALIGN(x) ALIGN_MOD((x))
-
-# define		ALLFREE	2
 # define		SUCCESS	1
 # define		NOPE	0
 # define		ERROR	-1
@@ -59,6 +57,7 @@ typedef	struct		s_pages
 # define		AREA_SIZE	sizeof(t_area)
 # define		HEADER_SIZE	sizeof(t_chunk)
 
+# define		HEX "0123456789abcdef"
 
 t_pages				g_page;
 pthread_mutex_t		g_thread;
@@ -66,37 +65,39 @@ pthread_mutex_t		g_thread;
 /*
 **	malloc func
 */
-void	*malloc(size_t size);
-void	*manage_small_or_medium(size_t size);
-void	*manage_large(size_t size, t_area **area);
+void			*malloc(size_t size);
+void			*manage_small_or_medium(size_t size);
+void			*manage_large(size_t size, t_area **area);
 
-t_area	*create_new_area(size_t size, t_area *prev);
-t_area	*create_large_area(size_t size);
+t_area			*create_new_area(size_t size, t_area *prev);
+t_area			*create_large_area(size_t size);
 
-void	*search_free_chunk(size_t size, t_area *area);
-t_area	*search_small_area(size_t size);
-t_area	*search_medium_area(size_t size);
+void			*search_free_chunk(size_t size, t_area *area);
+t_area			*search_small_area(size_t size);
+t_area			*search_medium_area(size_t size);
 
 /*
 **	free func
 */
-void	free(void *ptr);
+void			free(void *ptr);
 
 /*
 **	realloc func
 */
-void	*realloc(void *ptr, size_t size);
+void			*realloc(void *ptr, size_t size);
 
 /*
 ** calloc func
 */
-void	*calloc(size_t count, size_t size);
+void			*calloc(size_t count, size_t size);
 
 /*
 **  utils
 */
-size_t  align_size(size_t size);
-void	show_alloc_mem(void);
-void	ft_puthex(unsigned long l);
-void	ft_putaddr(void *ptr);
+size_t  		align_size(size_t size);
+void			show_alloc_mem(void);
+void			ft_puthex(unsigned long l);
+void			ft_puthex_fd(unsigned long l, int fd);
+void			ft_putaddr(void *ptr);
+unsigned long	generate_checksum();
 #endif

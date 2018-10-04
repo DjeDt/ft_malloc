@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/28 20:30:59 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/03 19:00:48 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/04 19:57:57 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,9 @@ static int	search_large(t_area **area, void *ptr)
 		if ((char*)save + AREA_SIZE == ptr)
 		{
 			if (prev != NULL)
-			{
 				prev->next = save->next;
-			}
 			else
-			{
-					(*area) = save->next;
-			}
+				(*area) = save->next;
 			ret = munmap(save, save->size_max);
 			return (ret == 0 ? SUCCESS : ERROR);
 		}
@@ -74,17 +70,18 @@ static int	search_smaller(t_area *area, void *ptr)
 
 void	free(void *ptr)
 {
-	int		ret;
-
 	if (ptr == NULL)
 		return ;
-	ret = 0;
-	if ((ret = search_smaller(g_page.small, ptr)) != SUCCESS)
+	if (ENABLE_CHECKSUM == ENABLE && generate_checksum() != g_page.cheksum)
+		ft_putendl_fd("error, hash differs, data may be corrupted", STDERR_FILENO);
+	if (search_smaller(g_page.small, ptr) != SUCCESS)
 	{
-		if ((ret = search_smaller(g_page.medium, ptr)) != SUCCESS)
+		if (search_smaller(g_page.medium, ptr) != SUCCESS)
 		{
-			if ((ret = search_large(&g_page.large, ptr)) == ERROR)
+			if (search_large(&g_page.large, ptr) == ERROR)
 				ft_putendl_fd("error when unmap memory", STDERR_FILENO);
 		}
 	}
+	if (ENABLE_CHECKSUM == ENABLE)
+		g_page.cheksum = generate_checksum();
 }

@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/25 13:21:38 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/01 12:17:33 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/04 19:19:23 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,5 +18,9 @@
 
 # define ENABLE_DEBUG DISABLE
 //# define ENABLE_DEBUG ENABLE
+
+//# define ENABLE_CHECKSUM DISABLE
+# define ENABLE_CHECKSUM ENABLE
+# define CHECKSUM_DEBUG DISABLE
 
 #endif
