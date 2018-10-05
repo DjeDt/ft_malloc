@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/16 16:56:42 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/05 13:29:10 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/05 14:54:17 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,11 @@ static void		*search_in_this_one(t_chunk *chunk, void *ptr, \
 			else
 			{
 				ret = malloc(size);
+				if (pthread_mutex_lock(&g_thread) != 0)
+					ft_putendl_fd("error, can't lock mutex", STDERR_FILENO);
 				ft_memcpy(ret, ptr, save->size);
+				if (pthread_mutex_unlock(&g_thread) != 0)
+					ft_putendl_fd("error, can't unlock mutex", STDERR_FILENO);
 				free(ptr);
 				return (ret);
 			}
@@ -69,7 +73,11 @@ static void		*search_for_large_chunk(t_area *area, void *ptr, size_t size)
 		if ((char*)save + AREA_SIZE == ptr)
 		{
 			ret = malloc(size);
+			if (pthread_mutex_lock(&g_thread) != 0)
+				ft_putendl_fd("error, can't lock mutex", STDERR_FILENO);
 			ft_memcpy(ret, ptr, save->size_used);
+			if (pthread_mutex_unlock(&g_thread) != 0)
+				ft_putendl_fd("error, can't unlock mutex", STDERR_FILENO);
 			free(ptr);
 			return (ret);
 		}
