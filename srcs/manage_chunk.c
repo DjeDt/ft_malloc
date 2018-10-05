@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/21 14:42:26 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/04 19:58:35 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/05 13:34:59 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static void	*push_chunk(size_t size, t_area *area)
 	return ((char*)new + HEADER_SIZE);
 }
 
-void	*manage_large(size_t size, t_area **area)
+void		*manage_large(size_t size, t_area **area)
 {
 	t_area	*tmp;
 
@@ -53,7 +53,7 @@ void	*manage_large(size_t size, t_area **area)
 	return ((char*)tmp->next + AREA_SIZE);
 }
 
-void	*manage_small_or_medium(size_t size)
+void		*manage_small_or_medium(size_t size)
 {
 	void	*ret;
 	t_area	*area;

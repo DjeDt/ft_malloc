@@ -6,24 +6,19 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/24 15:47:38 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/04 19:26:23 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/05 13:31:42 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
 
-void	print_info(void *addr, void *next, size_t size)
+void	print_info(void *addr, size_t size)
 {
 	if (addr)
 	{
 		ft_putaddr(addr);
 		ft_putstr(" data : ");
 		ft_putaddr((char*)addr + HEADER_SIZE);
-	}
-	if (next)
-	{
-		ft_putstr(" -> next-chunk -> ");
-		ft_putaddr(next);
 	}
 	ft_putstr(" : ");
 	ft_putnbr(size);
@@ -35,17 +30,12 @@ void	print_larger(t_area *tmp)
 	t_area	*tmp_lrg;
 
 	ft_putstr("LARGE: ");
-	if (tmp == NULL)
-	{
-		ft_putendl("Empty large area");
-		return ;
-	}
 	tmp_lrg = tmp;
 	ft_putaddr(tmp_lrg);
 	ft_putchar('\n');
 	while (tmp_lrg != NULL)
 	{
-		print_info(tmp_lrg, tmp_lrg->next, tmp_lrg->size_used);
+		print_info(tmp_lrg, tmp_lrg->size_used);
 		tmp_lrg = tmp_lrg->next;
 	}
 }
@@ -57,11 +47,6 @@ void	print_medium(t_area *tmp)
 
 	tmp_area = tmp;
 	ft_putstr("MEDIUM: ");
-	if (tmp_area == NULL)
-	{
-		ft_putendl("Empty medium area");
-		return ;
-	}
 	ft_putaddr(tmp_area);
 	ft_putchar('\n');
 	while (tmp_area != NULL)
@@ -69,7 +54,12 @@ void	print_medium(t_area *tmp)
 		tmp_chunk = tmp_area->chunk;
 		while (tmp_chunk != NULL)
 		{
-			print_info(tmp_chunk, tmp_chunk->next, tmp_chunk->size);
+			ft_putstr("statut = ");
+			if (tmp_chunk->statut == FREE)
+				ft_putstr("free | ");
+			else
+				ft_putstr("used | ");
+			print_info(tmp_chunk, tmp_chunk->size);
 			tmp_chunk = tmp_chunk->next;
 		}
 		tmp_area = tmp_area->next;
@@ -83,11 +73,6 @@ void	print_tiny(t_area *tmp)
 
 	tmp_area = tmp;
 	ft_putstr("TINY: ");
-	if (tmp_area == NULL)
-	{
-		ft_putendl("Empty tiny area\n");
-		return ;
-	}
 	ft_putstr("area main addr : ");
 	ft_putaddr(tmp_area);
 	ft_putchar('\n');
@@ -101,7 +86,7 @@ void	print_tiny(t_area *tmp)
 				ft_putstr("free | ");
 			else
 				ft_putstr("used | ");
-			print_info(tmp_chunk, tmp_chunk->next, tmp_chunk->size);
+			print_info(tmp_chunk, tmp_chunk->size);
 			tmp_chunk = tmp_chunk->next;
 		}
 		tmp_area = tmp_area->next;

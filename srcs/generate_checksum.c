@@ -6,13 +6,13 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/04 16:02:25 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/04 18:09:20 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/05 13:26:01 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
 
-unsigned long hash_memory(unsigned char *str, size_t limit)
+unsigned long	hash_memory(unsigned char *str, size_t limit)
 {
 	unsigned int hash;
 
@@ -24,7 +24,7 @@ unsigned long hash_memory(unsigned char *str, size_t limit)
 	return (hash);
 }
 
-unsigned long small_chunk_cheksum(void)
+unsigned long	small_chunk_cheksum(void)
 {
 	t_area			*small;
 	t_chunk			*tmp_chunk;
@@ -46,7 +46,7 @@ unsigned long small_chunk_cheksum(void)
 	return (cur_cksm);
 }
 
-unsigned long medium_chunk_cheksum(void)
+unsigned long	medium_chunk_cheksum(void)
 {
 	t_area			*medium;
 	t_chunk			*tmp_chunk;
@@ -68,7 +68,7 @@ unsigned long medium_chunk_cheksum(void)
 	return (cur_cksm);
 }
 
-unsigned long bigger_chunk_cheksum(void)
+unsigned long	bigger_chunk_cheksum(void)
 {
 	t_area			*small;
 	unsigned long	cur_cksm;
@@ -83,7 +83,7 @@ unsigned long bigger_chunk_cheksum(void)
 	return (cur_cksm);
 }
 
-unsigned long generate_checksum(void)
+unsigned long	generate_checksum(void)
 {
 	unsigned long	cksm;
 

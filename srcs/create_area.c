@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/21 16:49:41 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/04 18:30:56 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/05 13:33:24 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,9 @@ t_area	*create_large_area(size_t size)
 	t_area	*new;
 
 	total = size + AREA_SIZE;
-	new = mmap(NULL, total, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
+	new = mmap(NULL, total, \
+				PROT_READ | PROT_WRITE, \
+				MAP_ANON | MAP_PRIVATE, -1, 0);
 	if (new == MAP_FAILED)
 	{
 		ft_putendl_fd("allocation error. not enought space left.", 2);
@@ -53,7 +55,9 @@ t_area	*create_new_area(size_t size, t_area *prev)
 	page_len = getpagesize();
 	page_num = get_total_allocation(page_len, size);
 	total = (page_num * page_len) + AREA_SIZE;
-	new = mmap(NULL, total, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
+	new = mmap(NULL, total, \
+				PROT_READ | PROT_WRITE, \
+				MAP_ANON | MAP_PRIVATE, -1, 0);
 	if (new == MAP_FAILED)
 	{
 		ft_putendl_fd("allocation error. not enought space left.", 2);

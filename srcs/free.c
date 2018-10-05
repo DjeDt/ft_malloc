@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/28 20:30:59 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/04 19:57:57 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/05 13:34:27 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,12 +68,12 @@ static int	search_smaller(t_area *area, void *ptr)
 	return (NOPE);
 }
 
-void	free(void *ptr)
+void		free(void *ptr)
 {
 	if (ptr == NULL)
 		return ;
 	if (ENABLE_CHECKSUM == ENABLE && generate_checksum() != g_page.cheksum)
-		ft_putendl_fd("error, hash differs, data may be corrupted", STDERR_FILENO);
+		ft_putendl_fd("error, hash differs, corrupt data", STDERR_FILENO);
 	if (search_smaller(g_page.small, ptr) != SUCCESS)
 	{
 		if (search_smaller(g_page.medium, ptr) != SUCCESS)

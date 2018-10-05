@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/21 16:24:48 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/04 19:59:25 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/05 13:35:13 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ t_area	*search_small_area(size_t size)
 
 	if (g_page.small == NULL)
 	{
-	    g_page.small = create_new_area(TINY_SIZE, NULL);
+		g_page.small = create_new_area(TINY_SIZE, NULL);
 		return (g_page.small);
 	}
 	else
