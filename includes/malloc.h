@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:41:23 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/05 15:08:25 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/05 15:34:58 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ typedef	struct		s_pages
 # define HEX "0123456789abcdef"
 
 t_pages					g_page;
-static pthread_mutex_t	g_thread = PTHREAD_MUTEX_INITIALIZER;
+extern pthread_mutex_t	g_thread;
 
 /*
 **	malloc func
