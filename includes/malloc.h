@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:41:23 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/05 15:34:58 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/05 17:03:01 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ typedef	struct		s_pages
 	t_area			*small;
 	t_area			*medium;
 	t_area			*large;
-	unsigned long	cheksum;
+	unsigned long	checksum;
 }					t_pages;
 
 # define SUCCESS	1
@@ -105,6 +105,8 @@ void				ft_putaddr(void *ptr);
 ** thread protector
 */
 unsigned long		generate_checksum(void);
+int					generate_new_checksum(void);
+int					compare_checksum(void);
 void				thread_protection_lock(void);
 void				thread_protection_unlock(void);
 #endif

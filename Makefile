@@ -6,7 +6,7 @@
 #    By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/02/26 16:31:33 by ddinaut           #+#    #+#              #
-#    Updated: 2018/10/05 15:08:18 by ddinaut          ###   ########.fr        #
+#    Updated: 2018/10/05 16:58:37 by ddinaut          ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -55,6 +55,7 @@ SRCS =					\
 						\
 	utils.c				\
 	generate_checksum.c	\
+	manage_checksum.c	\
 	thread_protection.c \
 	show_alloc_mem.c
 

@@ -56,6 +56,4 @@ Mkfile.old
 dkms.conf
 
 # test file
-main.c
-srcs/utils.c
 tests
