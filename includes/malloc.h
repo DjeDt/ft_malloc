@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:41:23 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/05 14:44:36 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/05 15:08:25 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,5 +99,12 @@ void				show_alloc_mem(void);
 void				ft_puthex(unsigned long l);
 void				ft_puthex_fd(unsigned long l, int fd);
 void				ft_putaddr(void *ptr);
-unsigned long		generate_checksum();
+
+/*
+** checksum generator
+** thread protector
+*/
+unsigned long		generate_checksum(void);
+void				thread_protection_lock(void);
+void				thread_protection_unlock(void);
 #endif

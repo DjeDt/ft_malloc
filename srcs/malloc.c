@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:39:27 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/05 14:49:39 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/05 15:04:25 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,7 @@ void	*malloc(size_t size)
 {
 	void	*ret;
 
-	if (pthread_mutex_lock(&g_thread) != 0)
-		ft_putendl_fd("error, can't lock mutex", STDERR_FILENO);
+	thread_protection_lock();
 	if (ENABLE_CHECKSUM == ENABLE && generate_checksum() != g_page.cheksum)
 		ft_putendl_fd("error, hash differs, corrupted data", STDERR_FILENO);
 	size = align_size(size);
@@ -33,7 +32,6 @@ void	*malloc(size_t size)
 		ret = manage_large(size, &g_page.large);
 	if (ENABLE_CHECKSUM == ENABLE)
 		g_page.cheksum = generate_checksum();
-	if (pthread_mutex_unlock(&g_thread) != 0)
-		ft_putendl_fd("error, can't unlock mutex", STDERR_FILENO);
+	thread_protection_unlock();
 	return (ret);
 }

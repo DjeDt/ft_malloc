@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/28 20:30:59 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/05 14:55:31 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/05 15:03:56 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,8 +72,7 @@ void		free(void *ptr)
 {
 	if (ptr == NULL)
 		return ;
-	if (pthread_mutex_lock(&g_thread) != 0)
-		ft_putendl_fd("error, can't lock mutex", STDERR_FILENO);
+	thread_protection_lock();
 	if (ENABLE_CHECKSUM == ENABLE && generate_checksum() != g_page.cheksum)
 		ft_putendl_fd("error, hash differs, corrupt data", STDERR_FILENO);
 	if (search_smaller(g_page.small, ptr) != SUCCESS)
@@ -86,6 +85,5 @@ void		free(void *ptr)
 	}
 	if (ENABLE_CHECKSUM == ENABLE)
 		g_page.cheksum = generate_checksum();
-	if (pthread_mutex_unlock(&g_thread) != 0)
-		ft_putendl_fd("error, can't unlock mutex", STDERR_FILENO);
+	thread_protection_unlock();
 }

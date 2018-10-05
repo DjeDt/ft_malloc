@@ -6,7 +6,7 @@
 #    By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/02/26 16:31:33 by ddinaut           #+#    #+#              #
-#    Updated: 2018/10/05 11:47:23 by ddinaut          ###   ########.fr        #
+#    Updated: 2018/10/05 15:08:18 by ddinaut          ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -55,6 +55,7 @@ SRCS =					\
 						\
 	utils.c				\
 	generate_checksum.c	\
+	thread_protection.c \
 	show_alloc_mem.c
 
 OBJ_FILES = $(SRC_FILES:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
