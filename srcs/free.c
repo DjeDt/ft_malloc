@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/28 20:30:59 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/05 17:04:51 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/06 19:50:09 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,15 +40,25 @@ static int	search_large(t_area **area, void *ptr)
 static int	search_for_chunk(t_chunk *list, void *ptr)
 {
 	t_chunk *save;
+	t_chunk	*prev;
 
 	save = list;
+	prev = NULL;
 	while (save != NULL)
 	{
 		if ((char*)save + HEADER_SIZE == ptr)
 		{
 			save->statut = FREE;
+			if (prev != NULL)
+				merge_previous_chunk(prev, save);
+			else if (save->next != NULL && save->next->statut == FREE)
+			{
+				save->size += (save->next->size + HEADER_SIZE);
+				save->next = save->next->next;
+			}
 			return (SUCCESS);
 		}
+		prev = save;
 		save = save->next;
 	}
 	return (NOPE);
@@ -56,13 +66,27 @@ static int	search_for_chunk(t_chunk *list, void *ptr)
 
 static int	search_smaller(t_area *area, void *ptr)
 {
-	t_area *save;
+	t_area	*prev;
+	t_area	*save;
 
+	prev = NULL;
 	save = area;
 	while (save != NULL)
 	{
 		if (search_for_chunk(save->chunk, ptr) == SUCCESS)
+		{
+			if (area_ready_to_free(save) == SUCCESS)
+			{
+				if (prev != NULL)
+					prev->next = save->next;
+				else
+					area = save->next;
+				if (munmap(save, save->size_max) != 0)
+					ft_putendl_fd("error when unmap memory", STDERR_FILENO);
+			}
 			return (SUCCESS);
+		}
+		prev = save;
 		save = save->next;
 	}
 	return (NOPE);

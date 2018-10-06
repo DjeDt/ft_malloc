@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:41:23 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/05 17:03:01 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/06 19:51:01 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ typedef	struct		s_pages
 
 # define FREE		1
 # define USED		0
+# define PERCENT_ALLOWED 60
 
 # define TINY_SIZE		512
 # define MEDIUM_SIZE	1024
@@ -80,6 +81,8 @@ t_area				*search_medium_area(size_t size);
 **	free func
 */
 void				free(void *ptr);
+void				merge_previous_chunk(t_chunk *prev, t_chunk *current);
+int					area_ready_to_free(t_area *area);
 
 /*
 **	realloc func
@@ -109,4 +112,5 @@ int					generate_new_checksum(void);
 int					compare_checksum(void);
 void				thread_protection_lock(void);
 void				thread_protection_unlock(void);
+
 #endif

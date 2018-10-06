@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/28 19:58:40 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/05 17:18:58 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/06 19:45:41 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -362,6 +362,26 @@ void	test_thread2()
 		pthread_create(&th[i], NULL, &thread_malloc, NULL);
 }
 
+void	test_new_free()
+{
+	int count;
+	char *ptr;
+	char *ptr2;
+	char *ptr3;
+
+	count = 0;
+	while (count < 2)
+	{
+		ptr2 = malloc(50);
+		ptr = malloc(400);
+		ptr3 = malloc(50);
+		free(ptr);
+		count++;
+	}
+	free(ptr2);
+	free(ptr3);
+}
+
 int		main(int ac, char **av, char **env)
 {
 /* 	int count = 0; */
@@ -417,15 +437,17 @@ int		main(int ac, char **av, char **env)
 //	test_corrupt_metadata();
 
 	//test_thread2();
-	int sldf = 0;
-	while (sldf++ < 500)
-	{
-		ft_putnbr(sldf);
-		ft_putstr(" . ");
-		test_thread2();
-	}
+	/* int sldf = 0; */
+	/* while (sldf++ < 500) */
+	/* { */
+	/* 	ft_putnbr(sldf); */
+	/* 	ft_putstr(" . "); */
+	/* 	test_thread2(); */
+	/* } */
+
+	test_new_free();
+	show_alloc_mem();
 
 //	sleep(1);
-//	show_alloc_mem();
 	return (0);
 }

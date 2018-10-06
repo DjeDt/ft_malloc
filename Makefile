@@ -6,7 +6,7 @@
 #    By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/02/26 16:31:33 by ddinaut           #+#    #+#              #
-#    Updated: 2018/10/05 16:58:37 by ddinaut          ###   ########.fr        #
+#    Updated: 2018/10/06 19:50:24 by ddinaut          ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -52,6 +52,7 @@ SRCS =					\
 	realloc.c			\
 	calloc.c			\
 	free.c				\
+	free_utils.c		\
 						\
 	utils.c				\
 	generate_checksum.c	\
