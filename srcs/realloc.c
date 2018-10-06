@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/16 16:56:42 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/05 17:05:37 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/06 20:01:16 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,8 +91,7 @@ static void		*check_area(void *ptr, size_t size)
 		return (ret);
 	else if ((ret = search_for_large_chunk(g_page.large, ptr, size)) != NULL)
 		return (ret);
-	else
-		return (NULL);
+	return (NULL);
 }
 
 void			*realloc(void *ptr, size_t size)
