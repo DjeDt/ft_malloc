@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/21 14:42:26 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/05 13:34:59 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/17 15:09:40 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,40 +17,42 @@ static void	*push_chunk(size_t size, t_area *area)
 	t_chunk	*tmp;
 	t_chunk *new;
 
-	new = (t_chunk*)((char*)area + area->size_used);
+	new = (void*)area + area->size_used;
 	new->size = size;
 	new->statut = USED;
 	new->next = NULL;
 	area->size_used += (size + HEADER_SIZE);
-	tmp = area->chunk;
-	if (tmp == NULL)
+	if (area->chunk == NULL)
 		area->chunk = new;
 	else
 	{
+		tmp = area->chunk;
 		while (tmp->next != NULL)
 			tmp = tmp->next;
 		tmp->next = new;
 	}
-	return ((char*)new + HEADER_SIZE);
+	return ((void*)new + HEADER_SIZE);
 }
 
 void		*manage_large(size_t size, t_area **area)
 {
+	t_area	*new;
 	t_area	*tmp;
 
 	if ((*area) == NULL)
 	{
 		(*area) = create_large_area(size);
-		return ((char*)(*area) + AREA_SIZE);
+		return ((void*)area + AREA_SIZE);
 	}
 	else
 	{
+		new = create_large_area(size);
 		tmp = (*area);
 		while (tmp->next != NULL)
 			tmp = tmp->next;
-		tmp->next = create_large_area(size);
+		tmp->next = new;
 	}
-	return ((char*)tmp->next + AREA_SIZE);
+	return ((void*)new + AREA_SIZE);
 }
 
 void		*manage_small_or_medium(size_t size)
@@ -72,7 +74,7 @@ void		*manage_small_or_medium(size_t size)
 			return (ret);
 		area = search_medium_area(size);
 	}
-	if (area == NULL)
+	if (!area)
 		return (NULL);
 	ret = push_chunk(size, area);
 	return (ret);

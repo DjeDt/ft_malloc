@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/21 16:24:48 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/05 13:35:13 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/17 15:18:56 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	*search_free_chunk(size_t size, t_area *area)
 			if (tmp->size >= size && tmp->statut == FREE)
 			{
 				tmp->statut = USED;
-				return ((char*)tmp + HEADER_SIZE);
+				return ((void*)tmp + HEADER_SIZE);
 			}
 			tmp = tmp->next;
 		}

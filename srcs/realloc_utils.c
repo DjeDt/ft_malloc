@@ -1,33 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   thread_protection.c                                :+:      :+:    :+:   */
+/*   realloc_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/10/05 14:58:10 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/17 15:21:37 by ddinaut          ###   ########.fr       */
+/*   Created: 2018/10/17 15:39:46 by ddinaut           #+#    #+#             */
+/*   Updated: 2018/10/17 17:15:02 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
 
-pthread_mutex_t g_thread = PTHREAD_MUTEX_INITIALIZER;
-
-void	thread_protection_lock(void)
+t_chunk		*larger_chunk_found(t_chunk *save, size_t aligned)
 {
-	if (ENABLE_THREAD_PROTECT == ENABLE)
-	{
-		if (pthread_mutex_lock(&g_thread) != 0)
-			ft_putendl_fd("error, can't lock mutex", STDERR_FILENO);
-	}
+	thread_protection_lock();
+	save->size = aligned;
+	thread_protection_unlock();
+	return (save);
 }
 
-void	thread_protection_unlock(void)
+void		*realloc_new_chunk(t_chunk *save, void *ptr, size_t size)
 {
-	if (ENABLE_THREAD_PROTECT == ENABLE)
-	{
-		if (pthread_mutex_unlock(&g_thread) != 0)
-			ft_putendl_fd("error, can't unlock mutex", STDERR_FILENO);
-	}
+	void *ret;
+
+	ret = malloc(size);
+	thread_protection_lock();
+	ft_memcpy(ret, ptr, save->size);
+	thread_protection_unlock();
+	free(save);
+	return (ret);
 }

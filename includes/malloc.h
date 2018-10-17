@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:41:23 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/06 19:51:01 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/17 18:02:01 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,10 @@
 
 typedef struct		s_chunk
 {
-	int				statut;
+	size_t			statut;
 	size_t			size;
 	struct s_chunk	*next;
+	size_t			align;
 }					t_chunk;
 
 typedef struct		s_area
@@ -44,13 +45,22 @@ typedef	struct		s_pages
 	unsigned long	checksum;
 }					t_pages;
 
+/*
+**	Check if x64 or x86 for memory alignement
+*/
+# if UINTPTR_MAX == 0xffffffff
+#  define MEM_ALIGN 8
+# else
+#  define MEM_ALIGN 16
+# endif
+
 # define SUCCESS	1
 # define NOPE		0
 # define ERROR		-1
 
 # define FREE		1
 # define USED		0
-# define PERCENT_ALLOWED 60
+# define PERCENT_ALLOWED 80
 
 # define TINY_SIZE		512
 # define MEDIUM_SIZE	1024
@@ -88,7 +98,8 @@ int					area_ready_to_free(t_area *area);
 **	realloc func
 */
 void				*realloc(void *ptr, size_t size);
-
+t_chunk				*larger_chunk_found(t_chunk *save, size_t aligned);
+void				*realloc_new_chunk(t_chunk *save, void *ptr, size_t size);
 /*
 ** calloc func
 */

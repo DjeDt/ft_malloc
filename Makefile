@@ -6,7 +6,7 @@
 #    By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/02/26 16:31:33 by ddinaut           #+#    #+#              #
-#    Updated: 2018/10/06 19:50:24 by ddinaut          ###   ########.fr        #
+#    Updated: 2018/10/17 18:02:44 by ddinaut          ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -20,7 +20,7 @@ SMB_LINK	= libft_malloc.so
 
 # Details #
 CC		= gcc
-FLAGS	= -Wall -Wextra -Werror
+FLAGS	= -Wall -Wextra -Werror -Wpadded
 DEB		= #-fsanitize=address
 
 # Directories
@@ -28,7 +28,7 @@ OBJ_DIR = .obj
 SRC_DIR = srcs
 INC_DIR = includes
 
-LIBFT	= -I libft/includes/ -Llibft -lft
+LIBFT		= -I libft/includes/ -Llibft -lft
 LIBPRINTF	= -Ift_printf/includes/ -Lft_printf/ -lftprintf
 
 # Colors #
@@ -50,6 +50,7 @@ SRCS =					\
 	create_area.c		\
 						\
 	realloc.c			\
+	realloc_utils.c		\
 	calloc.c			\
 	free.c				\
 	free_utils.c		\

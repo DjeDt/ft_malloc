@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/28 19:58:40 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/06 19:45:41 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/17 17:57:09 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -394,15 +394,14 @@ int		main(int ac, char **av, char **env)
 /* //		free(str); */
 /* 		count++; */
 /* 	} */
-/* 	large_test(); */
-/* 	large_test(); */
+
 /* 	large_test(); */
 /* 	large_test(); */
 /* 	large_test(); */
 /* 	mixed_test(); */
-/* 	realloc_test(); */
-
-/* 	show_alloc_mem(); */
+/* //	realloc_test(); */
+/* 	large_test(); */
+/* 	large_test(); */
 
 	/* ft_putendl("test 3 :"); */
 	/* test3(); */
@@ -412,20 +411,21 @@ int		main(int ac, char **av, char **env)
 	/* test4(); */
 	/* ft_putendl("test 5 :"); */
 	/* test5(); */
-	/*
-	small_test();
-	malloc(4);
-	medium_test();
-	test();
-	*/
 
-//	char *ptr = malloc(56);
-//	ptr = malloc(55);
-//	ptr = malloc(65);
-//	ptr = malloc(555);
-//	ptr = malloc(655);
-//	ptr = malloc(5555);
-//	ptr = malloc(6555);
+	char *ptr = malloc(4);
+
+	/* char *ptr = malloc(56); */
+	/* ptr = malloc(55); */
+	/* ptr = malloc(65); */
+	/* ptr = malloc(555); */
+	/* ptr = malloc(655); */
+	/* ptr = malloc(5555); */
+	/* ptr = malloc(6555); */
+	/* ptr = malloc(10); */
+	/* ptr = malloc(512); */
+	/* ptr = malloc(1024); */
+	/* ptr = malloc(1025); */
+//	show_alloc_mem();
 
 
 //	test_thread();
@@ -445,8 +445,8 @@ int		main(int ac, char **av, char **env)
 	/* 	test_thread2(); */
 	/* } */
 
-	test_new_free();
-	show_alloc_mem();
+	/* test_new_free(); */
+	/* show_alloc_mem(); */
 
 //	sleep(1);
 	return (0);

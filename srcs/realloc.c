@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/16 16:56:42 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/06 20:01:16 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/17 17:14:41 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,18 +22,16 @@ static void		*search_in_this_one(t_chunk *chunk, void *ptr, \
 	save = chunk;
 	while (save != NULL)
 	{
-		if ((char*)save + HEADER_SIZE == ptr)
+		if ((void*)save + HEADER_SIZE == ptr)
 		{
-			if (aligned < save->size)
+			if (aligned <= save->size)
 			{
-				save->size = aligned;
-				return (ptr);
+				save = larger_chunk_found(save, aligned);
+				return ((void*)save + HEADER_SIZE);
 			}
 			else
 			{
-				ret = malloc(size);
-				ft_memcpy(ret, ptr, save->size);
-				free(ptr);
+				ret = realloc_new_chunk(save, ptr, size);
 				return (ret);
 			}
 		}
@@ -51,7 +49,8 @@ static void		*search_for_chunk(t_area *area, void *ptr, \
 	save = area;
 	while (save != NULL)
 	{
-		if ((ret = search_in_this_one(save->chunk, ptr, size, aligned)) != NULL)
+		ret = search_in_this_one(save->chunk, ptr, size, aligned);
+		if (ret != NULL)
 			return (ret);
 		save = save->next;
 	}
@@ -66,10 +65,12 @@ static void		*search_for_large_chunk(t_area *area, void *ptr, size_t size)
 	save = area;
 	while (save != NULL)
 	{
-		if ((char*)save + AREA_SIZE == ptr)
+		if ((void*)save + AREA_SIZE == ptr)
 		{
 			ret = malloc(size);
-			ft_memcpy(ret, ptr, save->size_used);
+			thread_protection_lock();
+			ret = ft_memcpy(ret, ptr, save->size_used);
+			thread_protection_unlock();
 			free(ptr);
 			return (ret);
 		}

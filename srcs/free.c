@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/28 20:30:59 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/06 19:50:09 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/17 15:18:01 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ static int	search_large(t_area **area, void *ptr)
 	save = (*area);
 	while (save != NULL)
 	{
-		if ((char*)save + AREA_SIZE == ptr)
+		if ((void*)save + AREA_SIZE == ptr)
 		{
 			if (prev != NULL)
 				prev->next = save->next;
@@ -46,7 +46,7 @@ static int	search_for_chunk(t_chunk *list, void *ptr)
 	prev = NULL;
 	while (save != NULL)
 	{
-		if ((char*)save + HEADER_SIZE == ptr)
+		if ((void*)save + HEADER_SIZE == ptr)
 		{
 			save->statut = FREE;
 			if (prev != NULL)
