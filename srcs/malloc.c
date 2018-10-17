@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:39:27 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/17 17:59:12 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/17 18:04:56 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,6 @@ void	*malloc(size_t size)
 {
 	void	*ret;
 
-	ft_putnbr(MEM_ALIGN);
-	ft_putchar('\n');
 	thread_protection_lock();
 	compare_checksum();
 	size = align_size(size);
