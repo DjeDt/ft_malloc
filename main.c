@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/28 19:58:40 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/17 17:57:09 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/18 12:29:33 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -330,7 +330,7 @@ void	test_corrupt_metadata()
 	void *ptr = malloc(22);
 	memset(ptr, 'a', 22);
 	ft_putendl(ptr);
-	bzero((unsigned char*)ptr - AREA_SIZE, 22);
+	bzero((void*)ptr - AREA_SIZE, 22);
 	ptr = realloc(ptr, 50);
 	ft_putendl(ptr);
 }
@@ -412,7 +412,7 @@ int		main(int ac, char **av, char **env)
 	/* ft_putendl("test 5 :"); */
 	/* test5(); */
 
-	char *ptr = malloc(4);
+//	char *ptr = malloc(4);
 
 	/* char *ptr = malloc(56); */
 	/* ptr = malloc(55); */
@@ -434,7 +434,8 @@ int		main(int ac, char **av, char **env)
 	corr_test_1();
 	corr_test_2();
 	*/
-//	test_corrupt_metadata();
+	test_corrupt_metadata();
+	ft_putendl("program is still running :(make");
 
 	//test_thread2();
 	/* int sldf = 0; */

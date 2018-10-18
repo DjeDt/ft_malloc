@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/05 16:52:04 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/05 17:03:59 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/18 12:31:03 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,14 @@ int		compare_checksum(void)
 	{
 		if (g_page.checksum != generate_checksum())
 		{
-			ft_putendl_fd("error, hash differs, corrupted data", STDERR_FILENO);
+			ft_putendl_fd(\
+				"Error: hash differs, corrupted metadata", STDERR_FILENO);
+			if (ENABLE_CHEKSUM_ABORT == ENABLE)
+			{
+				ft_putendl_fd(\
+					"Fatal error: abort current program", STDERR_FILENO);
+				exit(EXIT_FAILURE);
+			}
 			return (ERROR);
 		}
 		return (SUCCESS);

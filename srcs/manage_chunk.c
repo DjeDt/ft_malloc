@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/21 14:42:26 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/17 15:09:40 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/18 11:57:32 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ static void	*push_chunk(size_t size, t_area *area)
 	new = (void*)area + area->size_used;
 	new->size = size;
 	new->statut = USED;
+	new->align = 0;
 	new->next = NULL;
 	area->size_used += (size + HEADER_SIZE);
 	if (area->chunk == NULL)

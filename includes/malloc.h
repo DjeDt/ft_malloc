@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:41:23 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/17 18:02:01 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/18 11:57:04 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,29 +21,29 @@
 # include "../ft_printf/includes/printf.h"
 # include "debug.h"
 
-typedef struct		s_chunk
+typedef struct			s_chunk
 {
-	size_t			statut;
-	size_t			size;
-	struct s_chunk	*next;
-	size_t			align;
-}					t_chunk;
+	size_t				statut;
+	size_t				size;
+	size_t				align;
+	struct s_chunk		*next;
+}						t_chunk;
 
-typedef struct		s_area
+typedef struct			s_area
 {
-	size_t			size_used;
-	size_t			size_max;
-	t_chunk			*chunk;
-	struct s_area	*next;
-}					t_area;
+	size_t				size_used;
+	size_t				size_max;
+	t_chunk				*chunk;
+	struct s_area		*next;
+}						t_area;
 
-typedef	struct		s_pages
+typedef	struct			s_pages
 {
-	t_area			*small;
-	t_area			*medium;
-	t_area			*large;
-	unsigned long	checksum;
-}					t_pages;
+	t_area				*small;
+	t_area				*medium;
+	t_area				*large;
+	unsigned long long	checksum;
+}						t_pages;
 
 /*
 **	Check if x64 or x86 for memory alignement
@@ -76,52 +76,52 @@ extern pthread_mutex_t	g_thread;
 /*
 **	malloc func
 */
-void				*malloc(size_t size);
-void				*manage_small_or_medium(size_t size);
-void				*manage_large(size_t size, t_area **area);
+void					*malloc(size_t size);
+void					*manage_small_or_medium(size_t size);
+void					*manage_large(size_t size, t_area **area);
 
-t_area				*create_new_area(size_t size, t_area *prev);
-t_area				*create_large_area(size_t size);
+t_area					*create_new_area(size_t size, t_area *prev);
+t_area					*create_large_area(size_t size);
 
-void				*search_free_chunk(size_t size, t_area *area);
-t_area				*search_small_area(size_t size);
-t_area				*search_medium_area(size_t size);
+void					*search_free_chunk(size_t size, t_area *area);
+t_area					*search_small_area(size_t size);
+t_area					*search_medium_area(size_t size);
 
 /*
 **	free func
 */
-void				free(void *ptr);
-void				merge_previous_chunk(t_chunk *prev, t_chunk *current);
-int					area_ready_to_free(t_area *area);
+void					free(void *ptr);
+void					merge_previous_chunk(t_chunk *prev, t_chunk *current);
+int						area_ready_to_free(t_area *area);
 
 /*
 **	realloc func
 */
-void				*realloc(void *ptr, size_t size);
-t_chunk				*larger_chunk_found(t_chunk *save, size_t aligned);
-void				*realloc_new_chunk(t_chunk *save, void *ptr, size_t size);
+void					*realloc(void *ptr, size_t size);
+t_chunk					*larger_chunk_found(t_chunk *save, size_t aligned);
+void					*realloc_new_chunk(t_chunk *save, void *ptr, size_t s);
 /*
 ** calloc func
 */
-void				*calloc(size_t count, size_t size);
+void					*calloc(size_t count, size_t size);
 
 /*
 **  utils
 */
-size_t				align_size(size_t size);
-void				show_alloc_mem(void);
-void				ft_puthex(unsigned long l);
-void				ft_puthex_fd(unsigned long l, int fd);
-void				ft_putaddr(void *ptr);
+size_t					align_size(size_t size);
+void					show_alloc_mem(void);
+void					ft_puthex(unsigned long l);
+void					ft_puthex_fd(unsigned long l, int fd);
+void					ft_putaddr(void *ptr);
 
 /*
 ** checksum generator
 ** thread protector
 */
-unsigned long		generate_checksum(void);
-int					generate_new_checksum(void);
-int					compare_checksum(void);
-void				thread_protection_lock(void);
-void				thread_protection_unlock(void);
+unsigned long long		generate_checksum(void);
+int						generate_new_checksum(void);
+int						compare_checksum(void);
+void					thread_protection_lock(void);
+void					thread_protection_unlock(void);
 
 #endif

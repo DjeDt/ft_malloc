@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/16 16:56:42 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/17 17:14:41 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/18 12:27:09 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ static void		*search_for_large_chunk(t_area *area, void *ptr, size_t size)
 		{
 			ret = malloc(size);
 			thread_protection_lock();
-			ret = ft_memcpy(ret, ptr, save->size_used);
+			ft_memcpy(ret, ptr, save->size_used);
 			thread_protection_unlock();
 			free(ptr);
 			return (ret);
@@ -85,6 +85,7 @@ static void		*check_area(void *ptr, size_t size)
 	void	*ret;
 
 	ret = NULL;
+	compare_checksum();
 	align = align_size(size);
 	if ((ret = search_for_chunk(g_page.small, ptr, size, align)) != NULL)
 		return (ret);

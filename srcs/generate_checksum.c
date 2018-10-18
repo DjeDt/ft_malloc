@@ -6,25 +6,25 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/10/04 16:02:25 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/05 13:26:01 by ddinaut          ###   ########.fr       */
+/*   Updated: 2018/10/18 12:20:17 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
 
-unsigned long	hash_memory(unsigned char *str, size_t limit)
+unsigned long long	hash_memory(unsigned char *data, size_t limit)
 {
-	unsigned int hash;
+	unsigned long long hash;
 
 	hash = 0;
 	while (limit--)
-		hash += *str++;
+		hash += *data++;
 	while (hash > 0xFFU)
 		hash = (hash & 0xFFU) + ((hash >> 8) & 0xFFU);
 	return (hash);
 }
 
-unsigned long	small_chunk_cheksum(void)
+unsigned long long	small_chunk_cheksum(void)
 {
 	t_area			*small;
 	t_chunk			*tmp_chunk;
@@ -46,7 +46,7 @@ unsigned long	small_chunk_cheksum(void)
 	return (cur_cksm);
 }
 
-unsigned long	medium_chunk_cheksum(void)
+unsigned long long	medium_chunk_cheksum(void)
 {
 	t_area			*medium;
 	t_chunk			*tmp_chunk;
@@ -68,7 +68,7 @@ unsigned long	medium_chunk_cheksum(void)
 	return (cur_cksm);
 }
 
-unsigned long	bigger_chunk_cheksum(void)
+unsigned long long	bigger_chunk_cheksum(void)
 {
 	t_area			*small;
 	unsigned long	cur_cksm;
@@ -83,9 +83,9 @@ unsigned long	bigger_chunk_cheksum(void)
 	return (cur_cksm);
 }
 
-unsigned long	generate_checksum(void)
+unsigned long long	generate_checksum(void)
 {
-	unsigned long	cksm;
+	unsigned long long	cksm;
 
 	cksm = 0;
 	cksm += small_chunk_cheksum();
