@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/21 14:42:26 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/18 11:57:32 by ddinaut          ###   ########.fr       */
+/*   Updated: 2019/02/28 17:32:47 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,8 @@ void		*manage_large(size_t size, t_area **area)
 	if ((*area) == NULL)
 	{
 		(*area) = create_large_area(size);
-		return ((void*)area + AREA_SIZE);
+		tmp = (*area);
+		return ((void*)tmp + AREA_SIZE);
 	}
 	else
 	{

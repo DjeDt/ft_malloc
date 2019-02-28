@@ -6,17 +6,18 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/28 20:30:59 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/17 15:18:01 by ddinaut          ###   ########.fr       */
+/*   Updated: 2019/02/28 18:57:05 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
+#include <errno.h>
+#include <stdio.h>
 
 static int	search_large(t_area **area, void *ptr)
 {
 	t_area	*save;
 	t_area	*prev;
-	int		ret;
 
 	prev = NULL;
 	save = (*area);
@@ -28,8 +29,8 @@ static int	search_large(t_area **area, void *ptr)
 				prev->next = save->next;
 			else
 				(*area) = save->next;
-			ret = munmap(save, save->size_max);
-			return (ret == 0 ? SUCCESS : ERROR);
+			munmap(save, save->size_max);
+			return (SUCCESS);
 		}
 		prev = save;
 		save = save->next;
@@ -81,8 +82,7 @@ static int	search_smaller(t_area *area, void *ptr)
 					prev->next = save->next;
 				else
 					area = save->next;
-				if (munmap(save, save->size_max) != 0)
-					ft_putendl_fd("error when unmap memory", STDERR_FILENO);
+				munmap(save, save->size_max);
 			}
 			return (SUCCESS);
 		}
@@ -92,20 +92,22 @@ static int	search_smaller(t_area *area, void *ptr)
 	return (NOPE);
 }
 
-void		free(void *ptr)
+void		free_protected(void *ptr)
 {
 	if (ptr == NULL)
 		return ;
-	thread_protection_lock();
 	compare_checksum();
 	if (search_smaller(g_page.small, ptr) != SUCCESS)
 	{
 		if (search_smaller(g_page.medium, ptr) != SUCCESS)
-		{
-			if (search_large(&g_page.large, ptr) == ERROR)
-				ft_putendl_fd("error when unmap memory", STDERR_FILENO);
-		}
+			search_large(&g_page.large, ptr);
 	}
 	generate_new_checksum();
+}
+
+void		free(void *ptr)
+{
+	thread_protection_lock();
+	free_protected(ptr);
 	thread_protection_unlock();
 }

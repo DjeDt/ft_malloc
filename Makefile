@@ -6,7 +6,7 @@
 #    By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/02/26 16:31:33 by ddinaut           #+#    #+#              #
-#    Updated: 2018/10/17 18:02:44 by ddinaut          ###   ########.fr        #
+#    Updated: 2019/02/28 17:47:38 by ddinaut          ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -20,7 +20,7 @@ SMB_LINK	= libft_malloc.so
 
 # Details #
 CC		= gcc
-FLAGS	= -Wall -Wextra -Werror -Wpadded
+FLAGS	= -Wall -Wextra -Werror #-Wpadded
 DEB		= #-fsanitize=address
 
 # Directories
@@ -28,7 +28,7 @@ OBJ_DIR = .obj
 SRC_DIR = srcs
 INC_DIR = includes
 
-LIBFT		= -I libft/includes/ -Llibft -lft
+LIBFT		= -Ilibft/includes/ -Llibft/ -lft
 LIBPRINTF	= -Ift_printf/includes/ -Lft_printf/ -lftprintf
 
 # Colors #
@@ -73,7 +73,7 @@ all: $(NAME)
 
 $(OBJ_DIR)/%.o : $(SRC_DIR)/%.c
 	mkdir -p $(dir $@)
-	$(CC) $(FLAGS) -o $@ -c $< -I$(INC_DIR)
+	$(CC) $(FLAGS) -fPIC -o $@ -c $< -I$(INC_DIR)
 
 $(NAME): libft ft_printf $(OBJ_FILES)
 	$(CC) $(FLAG) $(DEB) -shared -o $(NAME) $(OBJ_FILES) -I$(INC_DIR) $(LIBFT) $(LIBPRINTF)
@@ -82,14 +82,14 @@ $(NAME): libft ft_printf $(OBJ_FILES)
 
 libft:
 	@printf "[Compiling libft] :\n"
-	make -C libft/
+#	make -C libft/
 
 ft_printf:
 	@printf "\n[Compiling ft_printf] :\n"
-	make -C ft_printf/
+#	make -C ft_printf/
 
 test: all
-	$(CC) main.c $(NAME) -I$(INC_DIR) $(LIBPRINTF) $(LIBFT)
+	$(CC) test/aleatory.c -o aleatory $(NAME) -I$(INC_DIR) $(LIBPRINTF) $(LIBFT)
 
 clean:
 	/bin/rm -f $(OBJ_FILES)

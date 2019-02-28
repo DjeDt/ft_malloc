@@ -6,31 +6,45 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:39:27 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/17 18:04:56 by ddinaut          ###   ########.fr       */
+/*   Updated: 2019/02/28 18:02:25 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
 
-size_t	align_size(size_t size)
+size_t	align_size(size_t size, size_t align)
 {
-	if (size % MEM_ALIGN != 0)
-		size += MEM_ALIGN - (size % MEM_ALIGN);
+	if (size % align != 0)
+		size += align - (size % align);
 	return (size);
+}
+
+void	*malloc_protected(size_t size)
+{
+	void	*ret;
+
+	compare_checksum();
+	if (size <= MEDIUM_SIZE)
+	{
+		size = align_size(size, MEM_ALIGN);
+		ret = manage_small_or_medium(size);
+	}
+	else
+	{
+		size = align_size(size, MEM_ALIGN);
+		size = align_size(size, getpagesize());
+		ret = manage_large(size, &g_page.large);
+	}
+	generate_new_checksum();
+	return (ret);
 }
 
 void	*malloc(size_t size)
 {
-	void	*ret;
+	void *ret;
 
 	thread_protection_lock();
-	compare_checksum();
-	size = align_size(size);
-	if (size <= MEDIUM_SIZE)
-		ret = manage_small_or_medium(size);
-	else
-		ret = manage_large(size, &g_page.large);
-	generate_new_checksum();
+	ret = malloc_protected(size);
 	thread_protection_unlock();
 	return (ret);
 }

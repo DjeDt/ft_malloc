@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:41:23 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/18 11:57:04 by ddinaut          ###   ########.fr       */
+/*   Updated: 2019/02/28 17:48:25 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # include <pthread.h>
 
 # include "../libft/includes/libft.h"
-# include "../ft_printf/includes/printf.h"
+# include "printf.h"
 # include "debug.h"
 
 typedef struct			s_chunk
@@ -48,11 +48,7 @@ typedef	struct			s_pages
 /*
 **	Check if x64 or x86 for memory alignement
 */
-# if UINTPTR_MAX == 0xffffffff
-#  define MEM_ALIGN 8
-# else
-#  define MEM_ALIGN 16
-# endif
+# define MEM_ALIGN 16
 
 # define SUCCESS	1
 # define NOPE		0
@@ -77,12 +73,11 @@ extern pthread_mutex_t	g_thread;
 **	malloc func
 */
 void					*malloc(size_t size);
+void					*malloc_protected(size_t size);
 void					*manage_small_or_medium(size_t size);
 void					*manage_large(size_t size, t_area **area);
-
 t_area					*create_new_area(size_t size, t_area *prev);
 t_area					*create_large_area(size_t size);
-
 void					*search_free_chunk(size_t size, t_area *area);
 t_area					*search_small_area(size_t size);
 t_area					*search_medium_area(size_t size);
@@ -91,6 +86,7 @@ t_area					*search_medium_area(size_t size);
 **	free func
 */
 void					free(void *ptr);
+void					free_protected(void *ptr);
 void					merge_previous_chunk(t_chunk *prev, t_chunk *current);
 int						area_ready_to_free(t_area *area);
 
@@ -98,17 +94,19 @@ int						area_ready_to_free(t_area *area);
 **	realloc func
 */
 void					*realloc(void *ptr, size_t size);
+void					*realloc_protected(void *ptr, size_t size);
 t_chunk					*larger_chunk_found(t_chunk *save, size_t aligned);
 void					*realloc_new_chunk(t_chunk *save, void *ptr, size_t s);
 /*
 ** calloc func
 */
+void					*calloc_protected(size_t count, size_t size);
 void					*calloc(size_t count, size_t size);
 
 /*
 **  utils
 */
-size_t					align_size(size_t size);
+size_t					align_size(size_t size, size_t align);
 void					show_alloc_mem(void);
 void					ft_puthex(unsigned long l);
 void					ft_puthex_fd(unsigned long l, int fd);

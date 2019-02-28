@@ -6,7 +6,7 @@
 /*   By: ddinaut <ddinaut@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/25 13:21:38 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/18 11:55:08 by ddinaut          ###   ########.fr       */
+/*   Updated: 2019/02/28 19:15:04 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,9 @@
 
 # define ENABLE_DEBUG DISABLE
 
-# define ENABLE_CHECKSUM ENABLE
-# define ENABLE_CHEKSUM_ABORT ENABLE
-# define CHECKSUM_DEBUG ENABLE
+# define ENABLE_CHECKSUM DISABLE
+# define ENABLE_CHEKSUM_ABORT DISABLE
+# define CHECKSUM_DEBUG DISABLE
 # define ENABLE_THREAD_PROTECT ENABLE
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/21 16:49:41 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/17 12:10:35 by ddinaut          ###   ########.fr       */
+/*   Updated: 2019/02/28 18:52:29 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 size_t	get_total_allocation(size_t area_size, size_t get_page_size)
 {
-	size_t p_num;
 	size_t a_num;
+	size_t p_num;
 
 	p_num = 0;
 	a_num = 0;

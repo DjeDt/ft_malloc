@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/16 16:56:42 by ddinaut           #+#    #+#             */
-/*   Updated: 2018/10/18 12:27:09 by ddinaut          ###   ########.fr       */
+/*   Updated: 2019/02/28 18:00:15 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,11 +67,9 @@ static void		*search_for_large_chunk(t_area *area, void *ptr, size_t size)
 	{
 		if ((void*)save + AREA_SIZE == ptr)
 		{
-			ret = malloc(size);
-			thread_protection_lock();
+			ret = malloc_protected(size);
 			ft_memcpy(ret, ptr, save->size_used);
-			thread_protection_unlock();
-			free(ptr);
+			free_protected((void*)ptr - AREA_SIZE);
 			return (ret);
 		}
 		save = save->next;
@@ -86,19 +84,30 @@ static void		*check_area(void *ptr, size_t size)
 
 	ret = NULL;
 	compare_checksum();
-	align = align_size(size);
+	align = align_size(size, MEM_ALIGN);
 	if ((ret = search_for_chunk(g_page.small, ptr, size, align)) != NULL)
 		return (ret);
 	else if ((ret = search_for_chunk(g_page.medium, ptr, size, align)) != NULL)
 		return (ret);
 	else if ((ret = search_for_large_chunk(g_page.large, ptr, size)) != NULL)
-		return (ret);
+			return (ret);
 	return (NULL);
 }
 
-void			*realloc(void *ptr, size_t size)
+void			*realloc_protected(void *ptr, size_t size)
 {
 	if (ptr == NULL)
-		return (malloc(size));
+		return (malloc_protected(size));
 	return (check_area(ptr, size));
+}
+
+
+void			*realloc(void *ptr, size_t size)
+{
+	void *ret;
+
+	thread_protection_lock();
+	ret = realloc_protected(ptr, size);
+	thread_protection_unlock();
+	return (ret);
 }
