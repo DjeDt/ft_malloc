@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/16 16:56:42 by ddinaut           #+#    #+#             */
-/*   Updated: 2019/02/28 18:00:15 by ddinaut          ###   ########.fr       */
+/*   Updated: 2019/02/28 23:09:02 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,6 @@ void			*realloc_protected(void *ptr, size_t size)
 		return (malloc_protected(size));
 	return (check_area(ptr, size));
 }
-
 
 void			*realloc(void *ptr, size_t size)
 {

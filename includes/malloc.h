@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:41:23 by ddinaut           #+#    #+#             */
-/*   Updated: 2019/02/28 17:48:25 by ddinaut          ###   ########.fr       */
+/*   Updated: 2019/02/28 23:04:19 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,6 @@ typedef	struct			s_pages
 # define HEX "0123456789abcdef"
 
 t_pages					g_page;
-extern pthread_mutex_t	g_thread;
 
 /*
 **	malloc func
@@ -97,6 +96,7 @@ void					*realloc(void *ptr, size_t size);
 void					*realloc_protected(void *ptr, size_t size);
 t_chunk					*larger_chunk_found(t_chunk *save, size_t aligned);
 void					*realloc_new_chunk(t_chunk *save, void *ptr, size_t s);
+
 /*
 ** calloc func
 */

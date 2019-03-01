@@ -1,10 +1,7 @@
+#include "malloc.h"
 int	main()
 {
-	int i;
-	char *addr;
-
-	i = 0;
-	while (i < 1024)
-		i++;
+	void *ptr = malloc(16);
+	free(ptr);
 	return (0);
 }
