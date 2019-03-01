@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:41:23 by ddinaut           #+#    #+#             */
-/*   Updated: 2019/02/28 23:04:19 by ddinaut          ###   ########.fr       */
+/*   Updated: 2019/03/01 13:00:13 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ t_pages					g_page;
 void					*malloc(size_t size);
 void					*malloc_protected(size_t size);
 void					*manage_small_or_medium(size_t size);
-void					*manage_large(size_t size, t_area **area);
+void					*manage_large(size_t size);
 t_area					*create_new_area(size_t size, t_area *prev);
 t_area					*create_large_area(size_t size);
 void					*search_free_chunk(size_t size, t_area *area);
@@ -94,6 +94,11 @@ int						area_ready_to_free(t_area *area);
 */
 void					*realloc(void *ptr, size_t size);
 void					*realloc_protected(void *ptr, size_t size);
+
+void					*search_tiny_chunk(void *ptr, size_t size, size_t align);
+void					*search_medium_chunk(void *ptr, size_t size, size_t align);
+void					*search_large_chunk(void *ptr, size_t size);
+
 t_chunk					*larger_chunk_found(t_chunk *save, size_t aligned);
 void					*realloc_new_chunk(t_chunk *save, void *ptr, size_t s);
 

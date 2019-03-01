@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 16:39:27 by ddinaut           #+#    #+#             */
-/*   Updated: 2019/02/28 23:07:02 by ddinaut          ###   ########.fr       */
+/*   Updated: 2019/03/01 13:15:07 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@ void	*malloc_protected(size_t size)
 	void	*ret;
 
 	compare_checksum();
-	if (size == 0)
-		size = 1;
+	if (size <= 0)
+		return (NULL);
 	if (size <= MEDIUM_SIZE)
 	{
 		size = align_size(size, MEM_ALIGN);
@@ -35,7 +35,7 @@ void	*malloc_protected(size_t size)
 	{
 		size = align_size(size, MEM_ALIGN);
 		size = align_size(size, getpagesize());
-		ret = manage_large(size, &g_page.large);
+		ret = manage_large(size);
 	}
 	generate_new_checksum();
 	return (ret);

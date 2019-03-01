@@ -6,7 +6,7 @@
 /*   By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/21 14:42:26 by ddinaut           #+#    #+#             */
-/*   Updated: 2019/02/28 17:32:47 by ddinaut          ###   ########.fr       */
+/*   Updated: 2019/03/01 12:57:35 by ddinaut          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,21 +35,20 @@ static void	*push_chunk(size_t size, t_area *area)
 	return ((void*)new + HEADER_SIZE);
 }
 
-void		*manage_large(size_t size, t_area **area)
+void		*manage_large(size_t size)
 {
 	t_area	*new;
 	t_area	*tmp;
 
-	if ((*area) == NULL)
+	if (g_page.large == NULL)
 	{
-		(*area) = create_large_area(size);
-		tmp = (*area);
-		return ((void*)tmp + AREA_SIZE);
+		g_page.large = create_large_area(size);
+		return ((void*)g_page.large + AREA_SIZE);
 	}
 	else
 	{
+		tmp = g_page.large;
 		new = create_large_area(size);
-		tmp = (*area);
 		while (tmp->next != NULL)
 			tmp = tmp->next;
 		tmp->next = new;

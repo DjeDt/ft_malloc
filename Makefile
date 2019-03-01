@@ -6,7 +6,7 @@
 #    By: ddinaut <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/02/26 16:31:33 by ddinaut           #+#    #+#              #
-#    Updated: 2019/02/28 23:07:32 by ddinaut          ###   ########.fr        #
+#    Updated: 2019/03/01 11:09:03 by ddinaut          ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -88,7 +88,7 @@ ft_printf:
 	@printf "\n[Compiling ft_printf] :\n"
 #	make -C ft_printf/
 
-test: all
+test:
 	$(CC) test/aleatory.c -o aleatory $(NAME) -I$(INC_DIR) $(LIBPRINTF) $(LIBFT)
 
 clean:
